@@ -18,3 +18,9 @@
 - Technicien : Peut modifier les fiches PC à l'intérieur de la BD.
 - Responsable inventaire : Peut ajouter les nouveaux PC à restaurés dans la BD et association d'une fiche vierge pour chacun d'entre eux.
 - Validateur : Valide le fonctionnement d'un PC, il a le choix entre renvoyer le PC en atelier ou approuver son bon fonctionnement et le préparer pour une livraison.
+
+## Function implémenté
+To be continued...
+## TODO
+- Ajout des structures
+- Création du moteur de la BD
