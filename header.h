@@ -8,6 +8,8 @@ struct fiche //En gros, la config du PC.
     char HDD[64];
     char OS[64];
     char Etat;
+    char Drivers[256];
+    char Softwares[256];
     };
 
 typedef struct fiche FICHE;
@@ -42,9 +44,62 @@ int CmptPcRep(LOG L[], int Rep); //La fonction renvoie le nombre de PC réparés d
 
 private ;
 
-int CmptPcExp(AVANCEE A[], int Exp); //La fonction balaye la liste des PC et compte le nombre de pc répondant aux critères d'expédition grace à la struct avancee
+int CmptPcExp(AVANCEE A[], int taille, int Exp); //La fonction balaye la liste des PC et compte le nombre de pc répondant aux critères d'expédition grace à la struct avancee
 int LogPc(LOG L[]);
 void BackupDB();
+int ajoutFichePC(FICHE *pp, AVANCEE *A, int taille, int Exp);
+int supprimePC(); // suppression de fiche
+int retrogradePC(); //fonction qui permet de retirer un pc de son etat expédiable
 
+int CmptPcExp(AVANCEE A[], int taille, int Exp)
+{
+    int i=0;
+
+    for (i=0; i<taille; i++)
+    {
+
+    }
+}
+
+int ajoutFichePC(FICHE *pp, AVANCEE *A, int taille, int Exp)
+{
+    FILE*f=NULL;  //A voir le format de la DB, pour l'instant je procède comme si la DB était un .txt
+    char nomfic[32];
+    char O;
+    char N;
+    printf("Nom du fichier DB ?\n");
+    scanf("%s", nomfic);
+    f=fopen(nomfic, "a");
+
+    if(f==NULL) //fichier innexistant
+    {
+        printf("DB introuvable");
+
+        if(f==NULL) //Le prog n'a pas les droits en écriture
+            return -1;
+    }
+
+    printf("\nID du PC ?\n"); fprintf(f, "ID : %s", pp->Nom);
+    printf("Son CPU ?\n"); fprintf(f, "CPU : %s", pp->CPU); A->Materiel=1; if (pp->CPU==NULL) {A->Materiel=0;}
+    printf("HDD ?\n"); fprintf(f, "HDD : %s", pp->HDD); A->Materiel=1; if (pp->HDD==NULL) {A->Materiel=0;}
+    printf("Son OS ?\n"); fprintf(f, "OS : %s", pp->OS); A->Os=1; if (pp->OS==NULL) {A->Os=0;}
+
+    if (A->Materiel == 1 && A->Os == 1) //Si la partie materielle et l'os présentes, l'etat est O pour oui.
+    {
+        fprintf(f, "Etat : O\n"); Exp=Exp+1;
+    }
+
+    else
+    {
+        fprintf(f, "Etat : N\n"); //Dans le cas contraire, l'etat est N pour non
+    }
+
+    printf("Drivers installés ?\n"); fprintf(f, "Drivers : %s", pp->Drivers);  //Drivers présents mais optionnels
+    printf("Divers software ?\n"); fprintf(f, "Softwares : %s", pp->Softwares); //Logiciels présents mais optionnels
+
+    taille = taille+1;
+    fclose(f);
+    return taille;
+}
 
 #endif // HEADER_H_INCLUDED
