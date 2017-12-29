@@ -45,10 +45,9 @@ int CmptPcRep(LOG L[], int Rep); //La fonction renvoie le nombre de PC réparés d
 private ;
 
 int CmptPcExp(AVANCEE A[], int taille, int Exp); //La fonction balaye la liste des PC et compte le nombre de pc répondant aux critères d'expédition grace à la struct avancee
-int LogPc(LOG L[]);
 void BackupDB();
 int ajoutFichePC(FICHE *pp, AVANCEE *A, int taille, int Exp);
-int supprimePC(); // suppression de fiche
+int supprimePC(FICHE *F, char *ID); // suppression de fiche
 int retrogradePC(); //fonction qui permet de retirer un pc de son etat expédiable
 
 int CmptPcExp(AVANCEE A[], int taille, int Exp)
@@ -100,6 +99,50 @@ int ajoutFichePC(FICHE *pp, AVANCEE *A, int taille, int Exp)
     taille = taille+1;
     fclose(f);
     return taille;
+}
+
+int supprimePC(FICHE *F, char *ID)
+{
+FILE*f=NULL;
+int pos=0;
+int trouve=0;
+char nomfic[32];
+
+printf("Nom du fichier DB ?\n");
+scanf("%s", nomfic); //exemple "DB.db"
+f=fopen(nomfic, "r+"); //En revanche j'ai écrit cette fonction de la même manière que pour un .txt donc méthode à vérifier.
+
+if(f==NULL) //Si le fichier n'existe pas, on retourne une erreur
+{
+return 0;
+}
+
+rewind(f); //On se place au début du fichier
+
+while(fscanf(f,"%s\n",F->Nom)!=EOF)
+{
+if(strcmp(F->Nom, ID)==0)
+{
+trouve=1;
+break;
+}
+pos++;
+}
+if (trouve == 0) return 0;
+
+printf("fiche trouvée\n");
+
+while(fscanf(f,"%s\n",F->Nom)!=EOF)
+{
+fseek(f,pos*52,SEEK_SET); //taille 52 arbitraire a vérifier la taille en octet d'une ligne sachant que la DB sera en binaire
+fprintf(f,"%-20s%",F->Nom);
+pos++;
+fseek(f,(pos+1)*52,SEEK_SET);
+}
+fseek(f,pos*52,SEEK_SET);
+fprintf(f,"%c",26);
+fclose(f);
+return 1;
 }
 
 #endif // HEADER_H_INCLUDED
