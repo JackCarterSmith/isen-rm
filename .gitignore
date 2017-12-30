@@ -41,6 +41,11 @@
 *.su
 *.idb
 *.pdb
+.cproject
+.project
+.settings
+*.cbp
+*.layout
 
 # Kernel Module Compile Results
 *.mod*
