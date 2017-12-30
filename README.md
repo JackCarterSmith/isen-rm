@@ -21,6 +21,7 @@
 
 ## Function implémenté
 To be continued...
+
 ## TODO
-- Ajout des structures
 - Création du moteur de la BD
+- Ajout de la fonction de logs
