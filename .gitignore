@@ -44,7 +44,7 @@
 .cproject
 .project
 .settings
-*.cpb
+*.cbp
 *.layout
 
 # Kernel Module Compile Results
