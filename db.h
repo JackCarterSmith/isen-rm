@@ -17,6 +17,17 @@ typedef struct head_db{
 	int cpt2;
 }HEAD;
 
+typedef struct fiche { //En gros, la config du PC.
+	char ID[11];
+    char Nom[257];
+    char CPU[65];
+    char HDD[65];
+    char OS[65];
+    unsigned Etat; 	//Par défaut 0x0 soit 0000 en base 2
+}FICHE;
+
+extern FICHE Fiche;
+
 
 int regenDBFile();  //Regénère la base de donnée, la remplace si elle existe déjà. Retourne 0 quand aucun problème.
 

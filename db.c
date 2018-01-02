@@ -50,7 +50,26 @@ int regenDBFile(){
 }
 
 int addCard(FICHE data){
+	FILE *db = NULL;
+	HEAD h;
 
+	db = fopen("db.irm","rb+");
+	if (db != NULL){
+		fread(&h, sizeof(HEAD), 1, db);
+		h.nbr_fiches += 1;
+		fseek(db, 0, SEEK_SET);
+		fwrite(&h, sizeof(HEAD), 1, db);
+
+		fseek(db, 0, SEEK_END);
+		fwrite(&data, sizeof(FICHE), 1, db);
+
+		fclose(db);
+	} else {
+		return -1;		//Problème dans la lecture du fichier
+		//Ajouter d'une entrée dans le log !
+	}
+
+	return 0;
 }
 
 int delCard(int id){
