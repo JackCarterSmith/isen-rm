@@ -3,6 +3,7 @@
 #include <string.h>
 #include <time.h>
 #include "header.h"
+#include "db.h"
 
 int main()
 {
@@ -14,6 +15,11 @@ int main()
     //int choixRespInventaire;
     //int *my_app=NULL;
     time_t now;
+    FILE *db = NULL;
+
+    db = fopen("db.irm","r");
+    if (db == NULL) {regenDBFile();}		//Vérifier si la base de donnée existe, sinon la reconstruire
+    fclose(db);
 
     FILE *lg=NULL;
     lg=fopen("historiqueActions.log", "a");
