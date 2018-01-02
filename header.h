@@ -1,18 +1,14 @@
 #ifndef HEADER_H_INCLUDED
 #define HEADER_H_INCLUDED
 
-struct fiche //En gros, la config du PC.
-    {
-    char Nom[256];
-    char CPU[64];
-    char HDD[64];
-    char OS[64];
-    char Etat;
-    char Drivers[256];
-    char Softwares[256];
-    };
-
-typedef struct fiche FICHE;
+typedef struct fiche { //En gros, la config du PC.
+	char ID[11];
+    char Nom[257];
+    char CPU[65];
+    char HDD[65];
+    char OS[65];
+    int Etat;
+}FICHE;
 
 struct avancee  //Structure de booleens. Chaque variable prend 1 si le PC comporte le module correspondant.
     {

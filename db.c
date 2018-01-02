@@ -49,3 +49,19 @@ int regenDBFile(){
 	return 0;
 }
 
+int addCard(FICHE data){
+
+}
+
+int delCard(int id){
+
+}
+
+FICHE readCard(int id){
+
+}
+
+int editCard(int id, FICHE data){
+
+}
+
