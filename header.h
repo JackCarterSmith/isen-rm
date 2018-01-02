@@ -1,18 +1,18 @@
 #ifndef HEADER_H_INCLUDED
 #define HEADER_H_INCLUDED
 
-typedef struct fiche //En gros, la config du PC.
-    {
-    char Nom[256];
-    char CPU[64];
-    char HDD[64];
-    char OS[64];
-    char Etat;
-    char Drivers[256];
-    char Softwares[256];
-    }FICHE;
-
 typedef struct stat_pc  //Structure de booleens. Chaque variable prend 1 si le PC comporte le module correspondant.
+
+typedef struct fiche { //En gros, la config du PC.
+	char ID[11];
+    char Nom[257];
+    char CPU[65];
+    char HDD[65];
+    char OS[65];
+    int Etat;
+}FICHE;
+
+struct avancee  //Structure de booleens. Chaque variable prend 1 si le PC comporte le module correspondant.
     {
     int Materiel;
     int Os;
@@ -33,15 +33,15 @@ typedef struct log // Historique des actions de l'utilisateur depuis le menu.
 
 // functions public
 
-int CmptPcRep(LOG L[], int Rep); //La fonction renvoie le nombre de PC réparés depuis le début de l'annee
+int CmptPcRep(LOG L[], int Rep); //La fonction renvoie le nombre de PC rÃ©parÃ©s depuis le dÃ©but de l'annee
 
-// functions privées ;
+// functions privÃ©es ;
 
-int CmptPcExp(STAT A[], int taille, int Exp); //La fonction balaye la liste des PC et compte le nombre de pc répondant aux critères d'expédition grace à la struct STAT
+int CmptPcExp(STAT A[], int taille, int Exp); //La fonction balaye la liste des PC et compte le nombre de pc rÃ©pondant aux critÃ¨res d'expÃ©dition grace Ã  la struct STAT
 void BackupDB();
 int ajoutFichePC(FICHE *pp, STAT *A, int taille, int Exp);
 int supprimePC(FICHE *F, char *ID); // suppression de fiche
-int retrogradePC(); //fonction qui permet de retirer un pc de son etat expédiable
+int retrogradePC(); //fonction qui permet de retirer un pc de son etat expÃ©diable
 
 
 #endif // HEADER_H_INCLUDED
