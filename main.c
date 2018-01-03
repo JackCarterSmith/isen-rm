@@ -1,4 +1,6 @@
+#include <conio.h>
 #include <stdio.h>
+#include <dos.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
@@ -12,12 +14,23 @@ int main()
     int choixValideur;
     //int choixTechnicien;
     //int choixRespInventaire;
-    //int *my_app=NULL;
+    //int *my_app=NULL
+    struct tm *pdh;
+    int intps = time(NULL);
+    pdh = localtime(&intps);
+    char name[64];
     time_t now;
-
     FILE *lg=NULL;
-    lg=fopen("historiqueActions.log", "a");
-    if(lg==NULL) return -1;
+    sprintf(name, "%02d-%02d-%04d.log", pdh->tm_mday, pdh->tm_mon+1, pdh->tm_year+1900);
+    lg=fopen(name, "a");
+
+    if(lg==NULL) //fichier innexistant
+    {
+        lg=fopen(name,"w+");
+
+        if(lg==NULL) //Le prog n'a pas les droits en écriture
+            return -1;
+    }
 
     my_app=malloc(sizeof(int)*taille);
     if(my_app==NULL){printf("Pb\n");return -1;}
