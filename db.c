@@ -9,6 +9,7 @@
 #define VERSION 1.0
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "db.h"
 
 int regenDBFile(){
@@ -49,20 +50,12 @@ int regenDBFile(){
 	return 0;
 }
 
-int addCard(FICHE data){
+int getConfig(HEAD *h) {
 	FILE *db = NULL;
-	HEAD h;
 
-	db = fopen("db.irm","rb+");
-	if (db != NULL){
-		fread(&h, sizeof(HEAD), 1, db);
-		h.nbr_fiches += 1;
-		fseek(db, 0, SEEK_SET);
-		fwrite(&h, sizeof(HEAD), 1, db);
-
-		fseek(db, 0, SEEK_END);
-		fwrite(&data, sizeof(FICHE), 1, db);
-
+	db = fopen("db.irm","rb");
+	if (db != NULL) {
+		fread(h, sizeof(HEAD), 1, db);
 		fclose(db);
 	} else {
 		return -1;		//Problème dans la lecture du fichier
@@ -72,15 +65,73 @@ int addCard(FICHE data){
 	return 0;
 }
 
-int delCard(int id){
+int addCard(FICHE data){
+	FILE *db = NULL;
+	HEAD *h = NULL;
+
+	if (getConfig(h) != 0) {
+		return -1;		//Problème dans la lecture du fichier
+		//Ajouter d'une entrée dans le log !
+	}
+	h->nbr_fiches += 1;
+
+	db = fopen("db.irm","rb+");
+	if (db != NULL){
+		fseek(db, 0, SEEK_SET);
+		fwrite(h, sizeof(HEAD), 1, db);
+
+		fseek(db, 0, SEEK_END);
+		fwrite(&data, sizeof(FICHE), 1, db);
+
+		fclose(db);
+	} else {
+		return -2;		//Problème dans la lecture du fichier
+		//Ajouter d'une entrée dans le log !
+	}
+
+	return 0;
+}
+
+int delCard(char id[]){
+	FILE *db = NULL;
+	HEAD *h = NULL;
+	int i;
+
+	if (getConfig(h) != 0) {
+		return -1;		//Problème dans la lecture du fichier
+		//Ajouter d'une entrée dans le log !
+	}
+	FICHE dump[h->nbr_fiches];
+
+	db = fopen("db.irm","rb+");
+	if (db != NULL){
+		fseek(db, sizeof(HEAD), SEEK_SET);
+		fread(dump, sizeof(FICHE), h->nbr_fiches, db);		//Le coeur de la function de dump des fiches en mémoire
+
+		h->nbr_fiches -= 1;
+		fseek(db, 0, SEEK_SET);
+		fwrite(h, sizeof(HEAD), 1, db);
+
+		for (i = 0; i < ((h->nbr_fiches) + 1); i++ ) {
+			if ( strcmp(dump[i].ID, id) != 0 ) {
+				fwrite(&dump[i], sizeof(FICHE), 1, db);
+			}
+		}
+
+		fclose(db);
+	} else {
+		return -2;		//Problème dans la lecture du fichier
+		//Ajouter d'une entrée dans le log !
+	}
+
+	return 0;
+}
+
+FICHE readCard(char id[]){
 
 }
 
-FICHE readCard(int id){
-
-}
-
-int editCard(int id, FICHE data){
+int editCard(FICHE data){
 
 }
 

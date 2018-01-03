@@ -158,8 +158,8 @@ int ajoutFichePC(FICHE *pp, STAT *A, int taille, int Exp)
         fprintf(f, "Etat : N\n"); //Dans le cas contraire, l'etat est N pour non
     }
 
-    printf("Drivers installés ?\n"); fprintf(f, "Drivers : %s", pp->Drivers);  //Drivers présents mais optionnels
-    printf("Divers software ?\n"); fprintf(f, "Softwares : %s", pp->Softwares); //Logiciels présents mais optionnels
+    //printf("Drivers installés ?\n"); fprintf(f, "Drivers : %s", pp->Drivers);  //Drivers présents mais optionnels
+    //printf("Divers software ?\n"); fprintf(f, "Softwares : %s", pp->Softwares); //Logiciels présents mais optionnels
 
     taille = taille+1;
     fclose(f);
