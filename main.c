@@ -1,5 +1,5 @@
-#define VERSION 1.0
 #include <stdio.h>
+#include <dos.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
@@ -14,17 +14,29 @@ int main()
     int choixValideur;
     //int choixTechnicien;
     //int choixRespInventaire;
-    //int *my_app=NULL;
+    //int *my_app=NULL
+    struct tm *pdh;
+    int intps = time(NULL);
+    pdh = localtime(&intps);
+    char name[64];
     time_t now;
     FILE *db = NULL;
 
     db = fopen("db.irm","r");
-    if (db == NULL) {regenDBFile();}		//Vérifier si la base de donnée existe, sinon la reconstruire
+    if (db == NULL) {regenDBFile();}		//Vï¿½rifier si la base de donnï¿½e existe, sinon la reconstruire
     fclose(db);
 
     FILE *lg=NULL;
-    lg=fopen("historiqueActions.log", "a");
-    if(lg==NULL) return -1;
+    sprintf(name, "%02d-%02d-%04d.log", pdh->tm_mday, pdh->tm_mon+1, pdh->tm_year+1900);
+    lg=fopen(name, "a");
+
+    if(lg==NULL) //fichier innexistant
+    {
+        lg=fopen(name,"w+");
+
+        if(lg==NULL) //Le prog n'a pas les droits en ï¿½criture
+            return -1;
+    }
 
     my_app=malloc(sizeof(int)*taille);
     if(my_app==NULL){printf("Pb\n");return -1;}
@@ -46,8 +58,8 @@ int main()
                 {
                     case 1 :    time(&now);
                                 fprintf(lg,"%s-Action Technicien\n", asctime(localtime(&now)));
-                                printf("\n** Modifier les entrées de la DB **\n");
-                                //appel d'une fonction de sous menu technicien "modifier les entrées de la DB"
+                                printf("\n** Modifier les entrï¿½es de la DB **\n");
+                                //appel d'une fonction de sous menu technicien "modifier les entrï¿½es de la DB"
                     break;
 
                     case 2 :    time(&now);
@@ -65,7 +77,7 @@ int main()
                                     do  {
                                             printf("\nMENU - Valideur\n");
                                             printf("1/ Supprimer une fiche pc\n");
-                                            printf("2/ Rétrograder une fiche pc en maintenance\n");
+                                            printf("2/ Rï¿½trograder une fiche pc en maintenance\n");
                                             printf("3/ Retour au menu principal\n");
                                             printf("choix ?\n");
                                             scanf("%d", &choixValideur);
@@ -87,7 +99,7 @@ int main()
 
                                                 case 3 :    time(&now);
                                                             fprintf(lg,"%s-Action Valideur - Retour au menu principal\n", asctime(localtime(&now)));
-                                                            //voir comment retourner au niveau précédent
+                                                            //voir comment retourner au niveau prï¿½cï¿½dent
 
                                                 default :   time(&now);
                                                             fprintf(lg,"%s Erreur saisie\n", asctime(localtime(&now)));
@@ -113,7 +125,7 @@ int main()
     return 0;
 }
 
-//prototypes temporaires et à améliorer.
+//prototypes temporaires et ï¿½ amï¿½liorer.
 
 int CmptPcExp(STAT A[], int taille, int Exp)
 {
@@ -127,7 +139,7 @@ int CmptPcExp(STAT A[], int taille, int Exp)
 
 int ajoutFichePC(FICHE *pp, STAT *A, int taille, int Exp)
 {
-    FILE*f=NULL;  //A voir le format de la DB, pour l'instant je procède comme si la DB était un .txt
+    FILE*f=NULL;  //A voir le format de la DB, pour l'instant je procï¿½de comme si la DB ï¿½tait un .txt
     char nomfic[32];
     char O;
     char N;
@@ -139,7 +151,7 @@ int ajoutFichePC(FICHE *pp, STAT *A, int taille, int Exp)
     {
         printf("DB introuvable");
 
-        if(f==NULL) //Le prog n'a pas les droits en écriture
+        if(f==NULL) //Le prog n'a pas les droits en ï¿½criture
             return -1;
     }
 
@@ -148,7 +160,7 @@ int ajoutFichePC(FICHE *pp, STAT *A, int taille, int Exp)
     printf("HDD ?\n"); fprintf(f, "HDD : %s", pp->HDD); A->Materiel=1; if (pp->HDD==NULL) {A->Materiel=0;}
     printf("Son OS ?\n"); fprintf(f, "OS : %s", pp->OS); A->Os=1; if (pp->OS==NULL) {A->Os=0;}
 
-    if (A->Materiel == 1 && A->Os == 1) //Si la partie materielle et l'os présentes, l'etat est O pour oui.
+    if (A->Materiel == 1 && A->Os == 1) //Si la partie materielle et l'os prï¿½sentes, l'etat est O pour oui.
     {
         fprintf(f, "Etat : O\n"); Exp=Exp+1;
     }
@@ -158,8 +170,8 @@ int ajoutFichePC(FICHE *pp, STAT *A, int taille, int Exp)
         fprintf(f, "Etat : N\n"); //Dans le cas contraire, l'etat est N pour non
     }
 
-    printf("Drivers installés ?\n"); fprintf(f, "Drivers : %s", pp->Drivers);  //Drivers présents mais optionnels
-    printf("Divers software ?\n"); fprintf(f, "Softwares : %s", pp->Softwares); //Logiciels présents mais optionnels
+    printf("Drivers installï¿½s ?\n"); fprintf(f, "Drivers : %s", pp->Drivers);  //Drivers prï¿½sents mais optionnels
+    printf("Divers software ?\n"); fprintf(f, "Softwares : %s", pp->Softwares); //Logiciels prï¿½sents mais optionnels
 
     taille = taille+1;
     fclose(f);
@@ -175,14 +187,14 @@ int supprimePC(FICHE *F, char *ID)
 
 	printf("Nom du fichier DB ?\n");
 	scanf("%s", nomfic); //exemple "DB.db"
-	f=fopen(nomfic, "r+"); //En revanche j'ai écrit cette fonction de la même manière que pour un .txt donc méthode à vérifier.
+	f=fopen(nomfic, "r+"); //En revanche j'ai ï¿½crit cette fonction de la mï¿½me maniï¿½re que pour un .txt donc mï¿½thode ï¿½ vï¿½rifier.
 
 	if(f==NULL) //Si le fichier n'existe pas, on retourne une erreur
 	{
 		return 0;
 	}
 
-	rewind(f); //On se place au début du fichier
+	rewind(f); //On se place au dï¿½but du fichier
 
 	while(fscanf(f,"%s\n",F->Nom)!=EOF)
 	{
@@ -196,11 +208,11 @@ int supprimePC(FICHE *F, char *ID)
 
 	if (trouve == 0) return 0;
 
-	printf("fiche trouvée\n");
+	printf("fiche trouvï¿½e\n");
 
 	while(fscanf(f,"%s\n",F->Nom)!=EOF)
 	{
-		fseek(f,pos*52,SEEK_SET); //taille 52 arbitraire a vérifier la taille en octet d'une ligne sachant que la DB sera en binaire
+		fseek(f,pos*52,SEEK_SET); //taille 52 arbitraire a vï¿½rifier la taille en octet d'une ligne sachant que la DB sera en binaire
 		fprintf(f,"%-20s%",F->Nom);
 		pos++;
 		fseek(f,(pos+1)*52,SEEK_SET);
