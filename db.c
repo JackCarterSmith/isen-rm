@@ -127,11 +127,39 @@ int delCard(char id[]){
 	return 0;
 }
 
-FICHE readCard(char id[]){
+int readCard(char id[], FICHE *f){
+	FICHE *card = NULL;
+	FILE *db = NULL;
+	HEAD *h = NULL;
+	int i;
 
+	if (getConfig(h) != 0) {
+		return -1;		//Problème dans la lecture du fichier
+		//Ajouter d'une entrée dans le log !
+	}
+
+	db = fopen("db.irm","rb+");
+	if (db != NULL){
+		fseek(db, sizeof(HEAD), SEEK_SET);
+		for (i = 0; i < ((h->nbr_fiches) + 1); i++ ) {
+			fread(card, sizeof(FICHE), 1, db);
+
+			if ( strcmp(card->ID, id) == 0 ) {
+				return 0;
+			}
+		}
+
+		fclose(db);
+	} else {
+		return -2;		//Problème dans la lecture du fichier
+		//Ajouter d'une entrée dans le log !
+	}
+
+	return -1;			//Aucun fichier dans la DB correspond à l'ID spécifié
+	//Ajouter d'une entrée dans le log !
 }
 
 int editCard(FICHE data){
-
+	return 0;
 }
 

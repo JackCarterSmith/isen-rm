@@ -34,7 +34,7 @@ int getConfig(HEAD *h);		//Récupère la config enregistrer dans le HEAD de la DB 
 
 int addCard(FICHE data);		//Ajouter une fiche
 int delCard(char id[]);			//Supprimer une fiche
-FICHE readCard(char id[]);			//Récupérer les datas d'une fiche
+int readCard(char id[], FICHE *f);			//Récupérer les datas d'une fiche
 int editCard(FICHE data);	//Editer les datas d'une fiche
 
 int backupDB();		//Créer une backup de la DB dans un sous dossier "backup"
