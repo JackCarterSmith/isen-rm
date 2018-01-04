@@ -2,9 +2,8 @@
 #include <stdio.h>
 #include <dos.h>
 #include <stdlib.h>
-#include <string.h>
-#include <time.h>
 #include "header.h"
+#include "logger.h"
 
 int main()
 {
@@ -15,21 +14,9 @@ int main()
     //int choixTechnicien;
     //int choixRespInventaire;
     //int *my_app=NULL
-    struct tm *pdh;
-    int intps = time(NULL);
-    pdh = localtime(&intps);
-    char name[64];
-    time_t now;
-    FILE *lg=NULL;
-    sprintf(name, "%02d-%02d-%04d.log", pdh->tm_mday, pdh->tm_mon+1, pdh->tm_year+1900);
-    lg=fopen(name, "a");
 
-    if(lg==NULL) //fichier innexistant
-    {
-        lg=fopen(name,"w+");
-
-        if(lg==NULL) //Le prog n'a pas les droits en écriture
-            return -1;
+    if (initialise_logger() != 0) {			//Initialise le logger et vérifie qu'il a bien démarré
+    	printf("\n\nATTENTION ! Le fichier de log ne peut être écris, aucune info ne sera enregistré !\n\n");
     }
 
     my_app=malloc(sizeof(int)*taille);
@@ -50,71 +37,60 @@ int main()
                 while (choix < 1 || choix > 4);
                 switch (choix)
                 {
-                    case 1 :    time(&now);
-                                fprintf(lg,"%s-Action Technicien\n", asctime(localtime(&now)));
+                    case 1 :    addLogInfo("Action Technicien");
                                 printf("\n** Modifier les entrées de la DB **\n");
                                 //appel d'une fonction de sous menu technicien "modifier les entrées de la DB"
-                    break;
+                                break;
 
-                    case 2 :    time(&now);
-                                fprintf(lg,"%s-Action Responsable inventaire\n", asctime(localtime(&now)));
+                    case 2 :    addLogInfo("Action Responsable inventaire");
                                 printf("\n** Ajout de fiches PC a ID unique **\n");
                                 //appel d'une fonction de sous menu resp inventaire "ajouter des fiches PC a ID unique"
                                 //ajoutFichePC(FICHE *pp, AVANCEE *A, int taille, int Exp)
-                    break;
+                                break;
 
-                    case 3 :    time(&now);
-                                fprintf(lg,"%s-Action Valideur\n", asctime(localtime(&now)));
+                    case 3 :    addLogInfo("Action Valideur");
                                 printf("\n** Supprimer ou retrograder une fiche PC **\n");
                                 // appel d'une fonction de sous menu valideur soit "supprimer une fiche PC" soit "retourner la fiche pc en maintenance"
                                 do {
-                                    do  {
-                                            printf("\nMENU - Valideur\n");
-                                            printf("1/ Supprimer une fiche pc\n");
-                                            printf("2/ Rétrograder une fiche pc en maintenance\n");
-                                            printf("3/ Retour au menu principal\n");
-                                            printf("choix ?\n");
-                                            scanf("%d", &choixValideur);
-                                         }
-                                            while (choixValideur < 1 || choixValideur > 3);
-                                            switch (choixValideur)
-                                            {
-                                                case 1 :    time(&now);
-                                                            fprintf(lg,"%s-Action Valideur - Supprimer une fiche pc\n", asctime(localtime(&now)));
-                                                            //int supprimePC(FICHE *F, char *ID);
+                                    do {
+											printf("\nMENU - Valideur\n");
+											printf("1/ Supprimer une fiche pc\n");
+											printf("2/ Rétrograder une fiche pc en maintenance\n");
+											printf("3/ Retour au menu principal\n");
+											printf("choix ?\n");
+											scanf("%d", &choixValideur);
+                                        } while (choixValideur < 1 || choixValideur > 3);
+										switch (choixValideur)
+										{
+											case 1 :    addLogInfo("Action Valideur - Supprimer une fiche pc");
+														//int supprimePC(FICHE *F, char *ID);
 
-                                                break;
+											break;
 
-                                                case 2 :    time(&now);
-                                                            fprintf(lg,"%s-Action Valideur - Retrograder une fiche pc\n", asctime(localtime(&now)));
-                                                            //int retrogradePC();
+											case 2 :    addLogInfo("Action Valideur - Retrograder une fiche pc");
+														//int retrogradePC();
 
-                                                break;
+											break;
 
-                                                case 3 :    time(&now);
-                                                            fprintf(lg,"%s-Action Valideur - Retour au menu principal\n", asctime(localtime(&now)));
-                                                            //voir comment retourner au niveau précédent
+											case 3 :    addLogInfo("Action Valideur - Retour au menu principal");
+														//voir comment retourner au niveau précédent
 
-                                                default :   time(&now);
-                                                            fprintf(lg,"%s Erreur saisie\n", asctime(localtime(&now)));
-                                                break;
-                                            }
-                                    }
-                                    while (choix != 3);
+											default :   addLogWarn("Erreur saisie");
+											break;
+										}
+                                    } while (choix != 3);
+                                break;
 
-                    break;
+                    case 4 :    addLogInfo("Quitter le programme");
+                    			break;
 
-                    case 4 :    time(&now);
-                                fprintf(lg,"%s-Quitter le programme\n", asctime(localtime(&now)));
-
-                    default :   time(&now);
-                                fprintf(lg,"%s Erreur saisie\n", asctime(localtime(&now)));
-                    break;
+                    default :   addLogWarn("Erreur saisie");
+                    			break;
 
                 }
     }
     while (choix != 4);
-    fclose(lg);
+    stop_logger();		//Stop le logger
     free(my_app);
     return 0;
 }
