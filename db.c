@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "db.h"
+#include "logger.h"
 
 int regenDBFile(){
 	/*
@@ -43,10 +44,11 @@ int regenDBFile(){
 
 		fclose(db);
 	} else {
+		addLogCritical("DB creation failure !");
 		return -1;		//Problème dans la lecture du fichier
-		//Ajouter d'une entrée dans le log !
 	}
 
+	addLogInfo("DB regenerated !");
 	return 0;
 }
 
@@ -70,8 +72,8 @@ int addCard(FICHE data){
 	HEAD *h = NULL;
 
 	if (getConfig(h) != 0) {
+		addLogCritical("Erreur de lecture de l'en-tête de la DB !");
 		return -1;		//Problème dans la lecture du fichier
-		//Ajouter d'une entrée dans le log !
 	}
 	h->nbr_fiches += 1;
 
@@ -82,13 +84,13 @@ int addCard(FICHE data){
 
 		fseek(db, 0, SEEK_END);
 		fwrite(&data, sizeof(FICHE), 1, db);
-
-		fclose(db);
 	} else {
+		addLogCritical("Erreur lors de l'ajout de la fiche dans la DB !");
 		return -2;		//Problème dans la lecture du fichier
-		//Ajouter d'une entrée dans le log !
 	}
 
+	fclose(db);
+	addLogInfo("Fiche ajoutée avec succès dans la DB.");
 	return 0;
 }
 
@@ -98,8 +100,8 @@ int delCard(char id[]){
 	int i;
 
 	if (getConfig(h) != 0) {
+		addLogCritical("Erreur de lecture de l'en-tête de la DB !");
 		return -1;		//Problème dans la lecture du fichier
-		//Ajouter d'une entrée dans le log !
 	}
 	FICHE dump[h->nbr_fiches];
 
@@ -117,13 +119,13 @@ int delCard(char id[]){
 				fwrite(&dump[i], sizeof(FICHE), 1, db);
 			}
 		}
-
-		fclose(db);
 	} else {
+		addLogCritical("Erreur lors de la suppression de la fiche dans la DB !");
 		return -2;		//Problème dans la lecture du fichier
-		//Ajouter d'une entrée dans le log !
 	}
 
+	fclose(db);
+	addLogInfo("Fiche supprimée avec succès dans la DB.");
 	return 0;
 }
 
@@ -134,8 +136,8 @@ int readCard(char id[], FICHE *f){
 	int i;
 
 	if (getConfig(h) != 0) {
+		addLogCritical("Erreur de lecture de l'en-tête de la DB !");
 		return -1;		//Problème dans la lecture du fichier
-		//Ajouter d'une entrée dans le log !
 	}
 
 	db = fopen("db.irm","rb");
@@ -146,18 +148,20 @@ int readCard(char id[], FICHE *f){
 
 			if ( strcmp(card->ID, id) == 0 ) {
 				fclose(db);
+				addLogInfo("Fiche récupérée avec succès dans la DB.");
 				return 0;
 			}
 		}
 
 		fclose(db);
 	} else {
+		addLogCritical("Erreur lors de la lecture de la fiche dans la DB !");
 		return -2;		//Problème dans la lecture du fichier
-		//Ajouter d'une entrée dans le log !
 	}
 
+	fclose(db);
 	return -1;			//Aucun fichier dans la DB correspond à l'ID spécifié
-	//Ajouter d'une entrée dans le log !
+	addLogWarn("L'id de la fiche spécifié n'est pas enregistré.");
 }
 
 int editCard(FICHE *data){
@@ -167,8 +171,8 @@ int editCard(FICHE *data){
 	int i;
 
 	if (getConfig(h) != 0) {
+		addLogCritical("Erreur de lecture de l'en-tête de la DB !");
 		return -1;		//Problème dans la lecture du fichier
-		//Ajouter d'une entrée dans le log !
 	}
 
 	db = fopen("db.irm","rb+");
@@ -183,16 +187,19 @@ int editCard(FICHE *data){
 				fwrite(data, sizeof(FICHE), 1, db);
 
 				fclose(db);
+				addLogInfo("Fiche éditée avec succès dans la DB.");
 				return 0;
 			}
 		}
 
 		fclose(db);
 	} else {
+		addLogCritical("Erreur lors de l'édition de la fiche dans la DB !");
 		return -2;		//Problème dans la lecture du fichier
-		//Ajouter d'une entrée dans le log !
 	}
 
-	return 0;
+	fclose(db);
+	addLogCritical("ID data value corrupted!");
+	return -3;		//Erreur interne, id corrompu
 }
 

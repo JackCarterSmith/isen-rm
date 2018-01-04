@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <dos.h>
 #include <stdlib.h>
 #include "header.h"
 #include "logger.h"
@@ -16,13 +15,13 @@ int main()
     //int *my_app=NULL
     FILE *db = NULL;
 
-    db = fopen("db.irm","r");
-    if (db == NULL) {regenDBFile();}		//V�rifier si la base de donn�e existe, sinon la reconstruire
-    fclose(db);
-
     if (initialise_logger() != 0) {			//Initialise le logger et v�rifie qu'il a bien d�marr�
     	printf("\n\nATTENTION ! Le fichier de log ne peut �tre �cris, aucune info ne sera enregistr� !\n\n");
     }
+
+    db = fopen("db.irm","r");
+    if (db == NULL) {regenDBFile();}		//V�rifier si la base de donn�e existe, sinon la reconstruire
+    fclose(db);
 
     my_app=malloc(sizeof(int)*taille);
     if(my_app==NULL){printf("Pb\n");return -1;}
