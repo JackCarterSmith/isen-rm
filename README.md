@@ -1,7 +1,7 @@
 # ISEN Repair Monitor
 ## Cahier des charges
 ### Exigences
-- Pouvoir stocker des 'fiches' PC, comprennant l'ID (unique), un nom à titre indicatif, le type de processeur, la quantité de mémoire vive (RAM), la capacité de staockage du disque dur, le système d'exploitation ainsi que les étapes de validation de bon fonctionnement de l'ordinateur (Hardware, OS, pilotes, software).
+- Pouvoir stocker des 'fiches' PC, comprennant l'ID (unique), un nom à titre indicatif, le type de processeur, la quantité de mémoire vive (RAM), la capacité de stockage du disque dur, le système d'exploitation ainsi que les étapes de validation de bon fonctionnement de l'ordinateur (Hardware, OS, pilotes, software).
 - Affichage de divers compteur (PC réparés totaux depuis le début de l'année, PC prêts pour livraison, etc...).
 - Enregistrement des évènements dans des logs (ajout, suppression, modification, validation, etc...).
 - Backup des données journalière.
@@ -20,8 +20,11 @@
 - Validateur : Valide le fonctionnement d'un PC, il a le choix entre renvoyer le PC en atelier ou approuver son bon fonctionnement et le préparer pour une livraison.
 
 ## Function implémenté
-To be continued...
+### v1.0
+- Moteur DB
+- Système de log des actions
 
 ## TODO
-- Création du moteur de la BD
-- Ajout de la fonction de logs
+- Conception du menu principal
+- Construction des functions publique et compteur
+- Début des batteries de tests et optimisation du code (si possible)
