@@ -1,34 +1,23 @@
+#include "db.h"
+
 #ifndef HEADER_H_INCLUDED
 #define HEADER_H_INCLUDED
 
-typedef struct stat_pc  //Structure de booleens. Chaque variable prend 1 si le PC comporte le module correspondant.
-
-typedef struct fiche { //En gros, la config du PC.
-	char ID[11];
-    char Nom[257];
-    char CPU[65];
-    char HDD[65];
-    char OS[65];
-    int Etat;
-}FICHE;
-
-struct avancee  //Structure de booleens. Chaque variable prend 1 si le PC comporte le module correspondant.
-    {
+typedef struct stat_pc {  //Structure de booleens. Chaque variable prend 1 si le PC comporte le module correspondant.
     int Materiel;
     int Os;
     int Drivers;
     int Software;
-    }STAT;
+}STAT;
 
-typedef struct log // Historique des actions de l'utilisateur depuis le menu.
-    {
+typedef struct log { // Historique des actions de l'utilisateur depuis le menu.
     int Annee;
     int Mois;
     int Jour;
     int Heure;
     int Minute;
     int Seconde;
-    }LOG;
+}LOG;
 
 
 // functions public
