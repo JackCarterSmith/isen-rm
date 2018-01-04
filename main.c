@@ -6,6 +6,8 @@
 
 int main()
 {
+    printf(" *******************\n *  ISEN RM v2.00  *\n *******************\n\n");
+
     int taille = 0; //taille temporaire du tableau de fiches
     int *my_app=NULL;
     int choix;
@@ -16,7 +18,7 @@ int main()
     FILE *db = NULL;
 
     if (initialise_logger() != 0) {			//Initialise le logger et v�rifie qu'il a bien d�marr�
-    	printf("\n\nATTENTION ! Le fichier de log ne peut �tre �cris, aucune info ne sera enregistr� !\n\n");
+    	printf("\n\nATTENTION ! Le fichier de log ne peut etre ecrit, aucune info ne sera enregistree !\n\n");
     }
 
     db = fopen("db.irm","r");
@@ -28,44 +30,37 @@ int main()
 
     do {
             do {
-                printf("\n**ISEN RM**\n\nMENU\n");
-                printf("Type d'utilisateur ?\n");
-                printf("1/ Technicien\n");
-                printf("2/ Responsable Inventaire\n");
-                printf("3/ Valideur\n");
-                printf("4/ Quitter le programme");
-                printf("Votre choix ?\n");
-                scanf("%d", &choix);
+                printf("\n -------------------\n |       MENU      |\n -------------------\n\n");
+                printf(" Veuillez entrer le type d'utilisateur.\n\n");
+                printf(" 1 | Technicien\n 2 | Responsable Inventaire\n 3 | Valideur\n 4 | Quitter le programme\n\n Champ de selection : ");
+                scanf(" %d", &choix);
                 }
 
                 while (choix < 1 || choix > 4);
                 switch (choix)
                 {
                     case 1 :    addLogInfo("Action Technicien");
-                                printf("\n** Modifier les entr�es de la DB **\n");
+                                printf("\n** Modifier les entrees de la DB **\n\n\n");
                                 //appel d'une fonction de sous menu technicien "modifier les entr�es de la DB"
                                 break;
 
                     case 2 :    addLogInfo("Action Responsable inventaire");
-                                printf("\n** Ajout de fiches PC a ID unique **\n");
+                                printf("\n** Ajout de fiches PC a ID unique **\n\n\n");
                                 //appel d'une fonction de sous menu resp inventaire "ajouter des fiches PC a ID unique"
                                 //ajoutFichePC(FICHE *pp, AVANCEE *A, int taille, int Exp)
                                 break;
 
                     case 3 :    addLogInfo("Action Valideur");
-                                printf("\n** Supprimer ou retrograder une fiche PC **\n");
                                 // appel d'une fonction de sous menu valideur soit "supprimer une fiche PC" soit "retourner la fiche pc en maintenance"
                                 do {
                                     do {
-											printf("\nMENU - Valideur\n");
-											printf("1/ Supprimer une fiche pc\n");
-											printf("2/ R�trograder une fiche pc en maintenance\n");
-											printf("3/ Retour au menu principal\n");
-											printf("choix ?\n");
+											printf("\n -------------------\n |  MENU Valideur  |\n -------------------\n\n");
+											printf(" 3.1 | Supprimer une fiche pc\n 3.2 | Retrograder une fiche pc en maintenance\n 3.3 | Retour au menu principal\n\n Champ de selection : ");
 											scanf("%d", &choixValideur);
-                                        } while (choixValideur < 1 || choixValideur > 3);
-										switch (choixValideur)
-										{
+                                        }
+                                            while (choixValideur < 1 || choixValideur > 3);
+                                            switch (choixValideur)
+                                            {
 											case 1 :    addLogInfo("Action Valideur - Supprimer une fiche pc");
 														//int supprimePC(FICHE *F, char *ID);
 
@@ -81,9 +76,9 @@ int main()
 
 											default :   addLogWarn("Erreur saisie");
 											break;
-										}
-                                    } while (choix != 3);
-                                break;
+                                            }
+                                        } while (choix != 3);
+                                    break;
 
                     case 4 :    addLogInfo("Quitter le programme");
                     			break;
@@ -182,7 +177,7 @@ int supprimePC(FICHE *F, char *ID)
 
 	if (trouve == 0) return 0;
 
-	printf("fiche trouv�e\n");
+	printf("fiche trouvee\n");
 
 	while(fscanf(f,"%s\n",F->Nom)!=EOF)
 	{
