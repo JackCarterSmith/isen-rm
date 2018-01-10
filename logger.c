@@ -37,21 +37,33 @@ void stop_logger() {fclose(log_file);}
 
 void addLogInfo(char *mess){
 	time_t now;
-	time(&now);
+	struct tm* tm_info;
+	char buffer[12];
 
-	fprintf(log_file,"[INFO][%s] %s\n", asctime(localtime(&now)), mess);
+	time(&now);
+	tm_info = localtime(&now);
+	strftime(buffer, 12, "%H:%M:%S", tm_info);
+	fprintf(log_file,"[INFO][%s] %s\n", buffer, mess);
 }
 
 void addLogWarn(char *mess){
 	time_t now;
-	time(&now);
+	struct tm* tm_info;
+	char buffer[12];
 
-	fprintf(log_file,"[WARN][%s] %s\n", asctime(localtime(&now)), mess);
+	time(&now);
+	tm_info = localtime(&now);
+	strftime(buffer, 12, "%H:%M:%S", tm_info);
+	fprintf(log_file,"[WARN][%s] %s\n", buffer, mess);
 }
 
 void addLogCritical(char *mess){
 	time_t now;
-	time(&now);
+	struct tm* tm_info;
+	char buffer[12];
 
-	fprintf(log_file,"[CRITICAL][%s] %s\n", asctime(localtime(&now)), mess);
+	time(&now);
+	tm_info = localtime(&now);
+	strftime(buffer, 12, "%H:%M:%S", tm_info);
+	fprintf(log_file,"[CRITICAL][%s] %s\n", buffer, mess);
 }
