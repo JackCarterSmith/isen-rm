@@ -6,7 +6,7 @@
  *
  *      DB Core
  */
-#define VERSION 1.2
+#define VERSION 1.3
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -208,18 +208,24 @@ int editCard(FICHE *data){
 				addLogInfo("Fiche éditée avec succès dans la DB.");
 				return 0;
 			}
+
+			addLogWarn("L'id de la fiche spécifié n'est pas enregistré.");
+			fclose(db);
+			free(h);
+			free(card);
+			return 2;
 		}
 	} else {
 		addLogCritical("Erreur lors de l'édition de la fiche dans la DB !");
 		free(h);
 		free(card);
-		return 2;		//Problème dans la lecture du fichier
+		return 3;		//Problème dans la lecture du fichier
 	}
 
 	free(h);
 	free(card);
 	fclose(db);
 	addLogCritical("ID data value corrupted!");
-	return 3;		//Erreur interne, id corrompu
+	return 4;		//Erreur interne, id corrompu
 }
 
