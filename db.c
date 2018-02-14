@@ -84,7 +84,7 @@ int addCard(FICHE *data){
 	HEAD *h = malloc(sizeof(HEAD));
 
 	if (getConfig(h) != 0) {
-		addLogCritical("Erreur de lecture de l'en-tête de la DB !");
+		addLogCritical("Add: Erreur de lecture de l'en-tête de la DB !");
 		free(h);
 		return 1;		//Problème dans la lecture du fichier
 	}
@@ -98,9 +98,9 @@ int addCard(FICHE *data){
 		fseek(db, 0, SEEK_END);
 		fwrite(data, sizeof(FICHE), 1, db);
 		//Ajouter l'ID dans le log
-		addLogInfo("Fiche %s ajoutée avec succés dans la DB.");
+		addLogInfo("Add: Fiche %s ajoutée avec succés dans la DB.");
 	} else {
-		addLogCritical("Erreur lors de l'ajout de la fiche dans la DB !");
+		addLogCritical("Add: Erreur lors de l'ajout de la fiche dans la DB !");
 		free(h);
 		return 2;		//Problème dans la lecture du fichier
 	}
@@ -116,7 +116,7 @@ int delCard(char id[]){
 	int i;
 
 	if (getConfig(h) != 0) {
-		addLogCritical("Erreur de lecture de l'en-tête de la DB !");
+		addLogCritical("Del: Erreur de lecture de l'en-tête de la DB !");
 		free(h);
 		return 1;		//Problème dans la lecture du fichier
 	}
@@ -127,7 +127,7 @@ int delCard(char id[]){
 		if ( checkIDExist(id,h->nbr_fiches,db) == 0) {
 			free(h);
 			fclose(db);
-			addLogWarn("L'id de la fiche spécifié n'est pas enregistré.");
+			addLogWarn("Del: L'id de la fiche spécifié n'est pas enregistré.");
 			return 2;			//Aucun fichier dans la DB correspond à l'ID spécifié
 		}
 		fseek(db, sizeof(HEAD), SEEK_SET);
@@ -145,13 +145,13 @@ int delCard(char id[]){
 		}
 	} else {
 		free(h);
-		addLogCritical("Erreur lors de la suppression de la fiche dans la DB !");
+		addLogCritical("Del: Erreur lors de la suppression de la fiche dans la DB !");
 		return 3;		//Problème dans la lecture du fichier
 	}
 
 	free(h);
 	fclose(db);
-	addLogInfo("Fiche supprimée avec succés dans la DB.");
+	addLogInfo("Del: Fiche supprimée avec succés dans la DB.");
 	return 0;
 }
 
@@ -161,7 +161,7 @@ int readCard(char id[], FICHE *f){
 	int i;
 
 	if (getConfig(h) != 0) {
-		addLogCritical("Erreur de lecture de l'en-tête de la DB !");
+		addLogCritical("Read: Erreur de lecture de l'en-tête de la DB !");
 		free(h);
 		return 1;		//Problème dans la lecture du fichier
 	}
@@ -177,7 +177,7 @@ int readCard(char id[], FICHE *f){
 			f->Etat = 0;
 			free(h);
 			fclose(db);
-			addLogWarn("L'id de la fiche spécifié n'est pas enregistré.");
+			addLogWarn("Read: L'id de la fiche spécifié n'est pas enregistré.");
 			return 2;			//Aucun fichier dans la DB correspond à l'ID spécifié
 		}
 		fseek(db, sizeof(HEAD), SEEK_SET);
@@ -187,12 +187,12 @@ int readCard(char id[], FICHE *f){
 			if ( strcmp(f->ID, id) == 0 ) {
 				free(h);
 				fclose(db);
-				addLogInfo("Fiche récupérée avec succés dans la DB.");
+				addLogInfo("Read: Fiche récupérée avec succés dans la DB.");
 				return 0;
 			}
 		}
 	} else {
-		addLogCritical("Erreur lors de la lecture de la fiche dans la DB !");
+		addLogCritical("Read: Erreur lors de la lecture de la fiche dans la DB !");
 		free(h);
 		return 2;		//Problème dans la lecture du fichier
 	}
@@ -205,7 +205,7 @@ int readCard(char id[], FICHE *f){
 	f->Etat = 0;
 	free(h);
 	fclose(db);
-	addLogCritical("ID data value corrupted!");
+	addLogCritical("Read: ID data value corrupted!");
 	return 3;		//Erreur interne, id corrompu
 }
 
@@ -216,7 +216,7 @@ int editCard(FICHE *data){
 	int i;
 
 	if (getConfig(h) != 0) {
-		addLogCritical("Erreur de lecture de l'en-tête de la DB !");
+		addLogCritical("Edit: Erreur de lecture de l'en-tête de la DB !");
 		free(h);
 		free(card);
 		return 1;		//Problème dans la lecture du fichier
@@ -228,7 +228,7 @@ int editCard(FICHE *data){
 			free(h);
 			free(card);
 			fclose(db);
-			addLogWarn("L'id de la fiche spécifié n'est pas enregistré.");
+			addLogWarn("Edit: L'id de la fiche spécifié n'est pas enregistré.");
 			return 2;			//Aucun fichier dans la DB correspond à l'ID spécifié
 		}
 		fseek(db, sizeof(HEAD), SEEK_SET);
@@ -243,12 +243,12 @@ int editCard(FICHE *data){
 				fclose(db);
 				free(h);
 				free(card);
-				addLogInfo("Fiche éditée avec succés dans la DB.");
+				addLogInfo("Edit: Fiche éditée avec succés dans la DB.");
 				return 0;
 			}
 		}
 	} else {
-		addLogCritical("Erreur lors de l'édition de la fiche dans la DB !");
+		addLogCritical("Edit: Erreur lors de l'édition de la fiche dans la DB !");
 		free(h);
 		free(card);
 		return 3;		//Problème dans la lecture du fichier
@@ -257,7 +257,7 @@ int editCard(FICHE *data){
 	free(h);
 	free(card);
 	fclose(db);
-	addLogCritical("ID data value corrupted!");
+	addLogCritical("Edit: ID data value corrupted!");
 	return 4;		//Erreur interne, id corrompu
 }
 
