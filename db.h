@@ -11,9 +11,10 @@
 #define DB_H_
 
 typedef struct head_db{
-	float version_db;		//Pour la compatibilité et la migration des données
+	float version_db;		//Pour la compatibilitÃ© et la migration des donnï¿½es
 	unsigned short int nbr_fiches;
 	unsigned int cpt_rep_total;
+	unsigned int cpt_ready2go;
 }HEAD;
 
 typedef struct fiche { //En gros, la config du PC.
@@ -23,21 +24,22 @@ typedef struct fiche { //En gros, la config du PC.
     char HDD[8];
     char MEM[8];
     char OS[32];
-    unsigned short int Etat; 	//Par défaut 0x0 soit 0000 en base 2
+    unsigned short int Etat; 	//Par dÃ©faut 0x0 soit 0000 en base 2
 }FICHE;
 
 extern FICHE Fiche;
 
 
-int regenDBFile();  //Regénère la base de donnée, la remplace si elle existe déjà. Retourne 0 quand aucun problème.
-int getConfig(HEAD *h);		//Récupère la config enregistrer dans le HEAD de la DB et l'enregistre dans le pointeur fourni
+int regenDBFile();  //RegÃ©nÃ¨re la base de donnÃ©e, la remplace si elle existe dÃ©jÃ . Retourne 0 quand aucun problÃ¨me.
+int getConfig(HEAD *h);		//RÃ©cupÃ¨re la config enregistrer dans le HEAD de la DB et l'enregistre dans le pointeur fourni.
+int checkIDExist(char id[], unsigned short int max_fiches, FILE *f);		//VÃ©rifie si l'id existe dans la db, necessite le passage du flux de fichier pour optimiser la mÃ©moire.
 
 int addCard(FICHE *data);		//Ajouter une fiche
 int delCard(char id[]);			//Supprimer une fiche
-int readCard(char id[], FICHE *f);			//Récupérer les datas d'une fiche
+int readCard(char id[], FICHE *f);			//RÃ©cupÃ¨rer les datas d'une fiche
 int editCard(FICHE *data);	//Editer les datas d'une fiche
 
-int backupDB();		//Créer une backup de la DB dans un sous dossier "backup"
-int restoreDB();	//Restaure la DB à partir d'une backup --a réfléchir
+int backupDB();		//Crï¿½er une backup de la DB dans un sous dossier "backup"
+int restoreDB();	//Restaure la DB Ã  partir d'une backup --a rÃ©flÃ©chir
 
 #endif /* DB_H_ */
