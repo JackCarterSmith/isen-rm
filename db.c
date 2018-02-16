@@ -86,7 +86,7 @@ int addCard(FICHE *data){
 	if (getConfig(h) != 0) {
 		addLogCritical("Add: Erreur de lecture de l'en-tête de la DB !");
 		free(h);
-		return 1;		//Problème dans la lecture du fichier
+		return 1;		//Problème dans la lecture de l'entête du fichier
 	}
 	h->nbr_fiches += 1;
 

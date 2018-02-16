@@ -39,7 +39,4 @@ int delCard(char id[]);			//Supprimer une fiche
 int readCard(char id[], FICHE *f);			//Récupèrer les datas d'une fiche
 int editCard(FICHE *data);	//Editer les datas d'une fiche
 
-int backupDB();		//Cr�er une backup de la DB dans un sous dossier "backup"
-int restoreDB();	//Restaure la DB à partir d'une backup --a réfléchir
-
 #endif /* DB_H_ */

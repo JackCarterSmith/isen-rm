@@ -5,11 +5,11 @@
  *      Author: are
  */
 
-#include "logger.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include "logger.h"
 
 FILE *log_file=NULL;
 
@@ -26,7 +26,7 @@ int initialise_logger(){
 	{
 		log_file=fopen(name,"w+");
 
-		if(log_file==NULL) //Le prog n'a pas les droits en écriture
+		if(log_file==NULL) //Le prog n'a pas les droits en ï¿½criture
 			return -1;
 	}
 
