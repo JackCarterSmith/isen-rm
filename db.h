@@ -32,6 +32,7 @@ extern FICHE Fiche;
 
 int regenDBFile();  //Regénère la base de donnée, la remplace si elle existe déjà. Retourne 0 quand aucun problème.
 int getConfig(HEAD *h);		//Récupère la config enregistrer dans le HEAD de la DB et l'enregistre dans le pointeur fourni.
+int getConfigF(HEAD *h, char db_file[]);		//Récupère la config enregistrer dans le HEAD dans le fichier DB spécifié et l'enregistre dans le pointeur fourni.
 int checkIDExist(char id[], unsigned short int max_fiches, FILE *f);		//Vérifie si l'id existe dans la db, necessite le passage du flux de fichier pour optimiser la mémoire.
 
 int addCard(FICHE *data);		//Ajouter une fiche

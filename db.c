@@ -67,6 +67,21 @@ int getConfig(HEAD *h) {
 	return 0;
 }
 
+int getConfigF(HEAD *h, char db_file[]) {
+	FILE *db = NULL;
+
+	db = fopen(db_file,"rb");
+	if (db != NULL) {
+		fread(h, sizeof(HEAD), 1, db);
+		fclose(db);
+	} else {
+		return 1;		//Problème dans la lecture du fichier
+		//Ajouter d'une entrée dans le log !
+	}
+
+	return 0;
+}
+
 int checkIDExist(char id[], unsigned short int max_fiches, FILE *f) {
 	int i;
 	FICHE dump;

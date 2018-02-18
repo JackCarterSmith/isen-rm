@@ -26,7 +26,7 @@ int initialise_logger(){
 	{
 		log_file=fopen(name,"w+");
 
-		if(log_file==NULL) //Le prog n'a pas les droits en �criture
+		if(log_file==NULL) //Le prog n'a pas les droits en écriture
 			return -1;
 	}
 
