@@ -8,7 +8,9 @@ int main()
 {
     printf(" *******************\n *  ISEN RM v2.00  *\n *******************\n\n");
 
+    char* NameLogin="identifiant.txt";
     int taille = 0; //taille temporaire du tableau de fiches
+    int Exp = 0;
     int *my_app=NULL;
     int choix;
     int choixValideur;
@@ -16,6 +18,11 @@ int main()
     //int choixRespInventaire;
     //int *my_app=NULL
     FILE *db = NULL;
+    FICHE *monF;
+    STAT *monA;
+    LOGIN *monL;
+
+    compareLogin(NameLogin);
 
     if (initialise_logger() != 0) {			//Initialise le logger et v�rifie qu'il a bien d�marr�
     	printf("\n\nATTENTION ! Le fichier de log ne peut etre ecrit, aucune info ne sera enregistree !\n\n");
@@ -47,7 +54,8 @@ int main()
                     case 2 :    addLogInfo("Action Responsable inventaire");
                                 printf("\n** Ajout de fiches PC a ID unique **\n\n\n");
                                 //appel d'une fonction de sous menu resp inventaire "ajouter des fiches PC a ID unique"
-                                //ajoutFichePC(FICHE *pp, AVANCEE *A, int taille, int Exp)
+                                ajoutFichePC(monF, monA, taille, Exp);
+                                addCard(monF);
                                 break;
 
                     case 3 :    addLogInfo("Action Valideur");
@@ -192,4 +200,45 @@ int supprimePC(FICHE *F, char *ID)
 	fclose(f);
 
 	return 1;
+}
+
+int compareLogin(char *fichierLogin)
+{
+	char Username1[33];
+	char Password1[33];
+	char UsernameTrue[33];
+	char PasswordTrue[33];
+    int compCharUsername;
+    int compCharPassword;
+
+	LOGIN L;
+	FILE* login=NULL;
+	login=fopen(fichierLogin,"r");
+	if(login==NULL) { return -1; }
+
+    do{
+
+            printf("\nEntrez le nom d'utilisateur :");
+            scanf("%s", Username1);
+            printf("Entrez le mot de passe :");
+            scanf("%s", Password1);
+
+            fscanf(login,"%s\n%s",&L.UserName,&L.PassWord);
+
+            compCharUsername = strcmp(Username1, L.UserName);
+            compCharPassword = strcmp(Password1, L.PassWord);
+
+            if (compCharPassword ==0 && compCharUsername==0) {printf("\nAcces autorise\n");}
+
+                else
+                    {
+                        printf("\nAcces refuse\n");
+                    }
+
+        } while (compCharUsername !=0 || compCharPassword !=0);
+
+
+
+	fclose(login);
+	return 0;
 }

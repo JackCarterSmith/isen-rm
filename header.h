@@ -19,8 +19,27 @@ typedef struct log { // Historique des actions de l'utilisateur depuis le menu.
     int Seconde;
 }LOG;
 
+typedef struct login {
+    char UserName[11];
+    char PassWord[11];
+}LOGIN;
+
 
 // functions public
+
+int CmptPcRep(LOG L[], int Rep); //La fonction renvoie le nombre de PC réparés depuis le début de l'annee
+
+// functions privées ;
+
+int compareLogin(char *fichierLogin);
+int CmptPcExp(STAT A[], int taille, int Exp); //La fonction balaye la liste des PC et compte le nombre de pc répondant aux critères d'expédition grace à la struct STAT
+void BackupDB();
+int ajoutFichePC(FICHE *pp, STAT *A, int taille, int Exp);
+int supprimePC(FICHE *F, char *ID); // suppression de fiche
+int retrogradePC(); //fonction qui permet de retirer un pc de son etat expédiable
+
+
+#endif // HEADER_H_INCLUDED
 
 int CmptPcRep(LOG L[], int Rep); //La fonction renvoie le nombre de PC réparés depuis le début de l'annee
 
