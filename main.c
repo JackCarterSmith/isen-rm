@@ -17,10 +17,6 @@ int main()
     //int *my_app=NULL
     FILE *db = NULL;
 
-    if (initialise_logger() != 0) {			//Initialise le logger et v�rifie qu'il a bien d�marr�
-    	printf("\n\nATTENTION ! Le fichier de log ne peut être écris, aucune info ne sera enregistré !\n\n");
-    }
-
     db = fopen("db.irm","rb");
     if (db == NULL) {regenDBFile();}		//V�rifier si la base de donn�e existe, sinon la reconstruire
     fclose(db);
