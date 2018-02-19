@@ -39,19 +39,14 @@ int backupDB() {
 	db = fopen("db.irm","rb");
 	if (db != NULL){
 		fseek(db, sizeof(HEAD), SEEK_SET);
-		printf("1");
 		fread(dump, sizeof(FICHE), h->nbr_fiches, db);		//Le coeur de la function de dump des fiches en mémoire
-		printf("2");
 		fclose(db);
-		printf("3");
-
 		sprintf(name, "db_%04d-%02d-%02d.bck", pdh->tm_year+1900, pdh->tm_mon+1, pdh->tm_mday);
-		printf("\n%s\n",name);
-		bck = fopen(name,"r");
+		bck = fopen(name,"rb");
 		if (bck != NULL) {
 			fclose(bck);
 			char confirm = 'N';
-			printf("ATTENTION ! Une sauvegarde est déjà présente, voulez-vous quand même l'écraser ? (N/o)");
+			printf("ATTENTION ! Une sauvegarde est déjà présente, voulez-vous quand même l'écraser ? (N/O)");
 			scanf(" %c", &confirm);
 			if (confirm == 'N') {
 				addLogWarn("BackUP: Bypass sauvegarde de démarrage.");
@@ -108,7 +103,7 @@ int restoreDB(int day, int mounth, int year) {
 		fclose(bck);
 
 		char confirm = 'N';
-		printf("ATTENTION ! Voulez-vous restaurer la sauvegarde ? (N/o)");
+		printf("ATTENTION ! Voulez-vous restaurer la sauvegarde ? (N/O)");
 		scanf(" %c", &confirm);
 		if (confirm == 'N') {
 			addLogWarn("Recovery: Annulation procédure de restauration.");

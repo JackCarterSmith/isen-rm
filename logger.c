@@ -18,7 +18,7 @@ int initialise_logger(){
 	struct tm *pdh;
 	time(&raw_time);
 	pdh = localtime(&raw_time);
-	char name[64];
+	char name[32];
 	sprintf(name, "%04d-%02d-%02d.log", pdh->tm_year+1900, pdh->tm_mon+1, pdh->tm_mday);
 	log_file=fopen(name, "a");
 
