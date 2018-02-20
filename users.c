@@ -97,7 +97,7 @@ int addUser(USER *u) {
 		fseek(u_db, 0, SEEK_END);
 		fwrite(u,sizeof(USER),1,u_db);
 		fseek(u_db,0,SEEK_SET);
-		u_nbr = u_nbr + 1;
+		u_nbr = u_nbr + 1;		//Incrementation du compteur
 		fwrite(&u_nbr,sizeof(unsigned int),1,u_db);
 
 		sprintf(logIDrecord,"AddUser: Ajout avec succès de l'utilisateur [%s].",u->u_id);
@@ -115,5 +115,40 @@ int addUser(USER *u) {
 }
 
 int delUser(char *u_id) {
-	return 0;
+	FILE *u_db = NULL;
+	unsigned int u_nbr = 1;
+	char *logIDrecord = malloc(sizeof(char)*64);
+	int i;
+
+	u_db = fopen("users.crd","rb+");
+	if (u_db != NULL) {
+		fseek(u_db,0,SEEK_SET);
+		fread(&u_nbr,sizeof(unsigned int),1,u_db);
+
+		USER dump[u_nbr];
+		fread(dump,sizeof(USER),u_nbr,u_db);	//Function de copie mémoire des utilisateurs
+
+		u_db = freopen("users.crd","wb",u_db);
+
+		fseek(u_db, 0, SEEK_SET);
+		u_nbr = u_nbr - 1;		//Decompte du compteur
+		fwrite(&u_nbr,sizeof(unsigned int),1,u_db);
+
+		for (i = 0; i < (u_nbr + 1); i++ ) {
+			if ( strcmp(dump[i].u_id, u_id) != 0 ) {
+				fwrite(&dump[i],sizeof(USER),1,u_db);
+			}
+		}
+
+		sprintf(logIDrecord,"DelUser: Suppression avec succès de l'utilisateur [%s].",u_id);
+		addLogInfo(logIDrecord);
+		free(logIDrecord);
+		fclose(u_db);
+		return 0;		//Utilisateur supprimé avec succès
+	}
+
+	sprintf(logIDrecord,"DelUser: Echec lors de la suppression de l'utilisateur [%s].",u_id);
+	addLogInfo(logIDrecord);
+	free(logIDrecord);
+	return 1; 		//Erreur fichier non existant
 }
