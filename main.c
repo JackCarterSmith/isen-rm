@@ -3,6 +3,7 @@
 #include <string.h>
 #include "header.h"
 #include "logger.h"
+#include "users.h"
 #include "db.h"
 //#include "backup.h"
 
@@ -16,10 +17,16 @@ int main()
     //int choixRespInventaire;
     //int *my_app=NULL
     FILE *db = NULL;
+    FILE *u_login = NULL;
+    USER *u = malloc(sizeof(USER));
 
     db = fopen("db.irm","rb");
-    if (db == NULL) {regenDBFile();}		//V�rifier si la base de donn�e existe, sinon la reconstruire
+    if (db == NULL) { regenDBFile(); }		//V�rifier si la base de donn�e existe, sinon la reconstruire
     fclose(db);
+
+    u_login = fopen("users.crd","rb");
+    if (u_login == NULL) { u_newSetup(); }
+    fclose(u_login);
 
     my_app=malloc(sizeof(int)*taille);
     if(my_app==NULL){printf("Pb\n");return -1;}
