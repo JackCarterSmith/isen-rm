@@ -24,9 +24,9 @@ void u_newSetup() {
 	}
 
 	printf("Bienvenue dans la première installation du logiciel !\nMerci de spécifier l'identifiant administrateur (8 chiffres) : ");
-	scanf(" %s",&(admin->u_id));
+	scanf("%s",admin->u_id);
 	printf("Pour des raisons de sécurité, merci de spécifier un code à 4 chiffres : ");
-	scanf(" %s",&(admin->u_pin));
+	scanf("%s",admin->u_pin);
 
 	printf("Enregistrement de l'utilisateur...\n");
 	f = fopen("users.crd","wb+");
@@ -86,7 +86,32 @@ int userLogin(USER *u) {
 }
 
 int addUser(USER *u) {
-	return 0;
+	FILE *u_db = NULL;
+	unsigned int u_nbr = 1;
+	char *logIDrecord = malloc(sizeof(char)*64);
+
+	u_db = fopen("users.crd","rb+");
+	if (u_db != NULL) {
+		fseek(u_db,0,SEEK_SET);
+		fread(&u_nbr,sizeof(unsigned int),1,u_db);
+		fseek(u_db, 0, SEEK_END);
+		fwrite(u,sizeof(USER),1,u_db);
+		fseek(u_db,0,SEEK_SET);
+		u_nbr = u_nbr + 1;
+		fwrite(&u_nbr,sizeof(unsigned int),1,u_db);
+
+		sprintf(logIDrecord,"AddUser: Ajout avec succès de l'utilisateur [%s].",u->u_id);
+		addLogInfo(logIDrecord);
+
+		free(logIDrecord);
+		fclose(u_db);
+		return 0;		//Utilisateur enregistré avec succès
+	}
+
+	sprintf(logIDrecord,"AddUser: Echec lors de l'ajout de l'utilisateur [%s].",u->u_id);
+	addLogInfo(logIDrecord);
+	free(logIDrecord);
+	return 1; 		//Erreur fichier non existant
 }
 
 int delUser(char *u_id) {
