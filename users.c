@@ -84,3 +84,11 @@ int userLogin(USER *u) {
 	free(logIDrecord);
 	return 3;	//Utilisateur inconnu
 }
+
+int addUser(USER *u) {
+	return 0;
+}
+
+int delUser(char *u_id) {
+	return 0;
+}
