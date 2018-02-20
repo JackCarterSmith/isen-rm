@@ -27,6 +27,7 @@ void u_newSetup() {
 	scanf("%s",admin->u_id);
 	printf("Pour des raisons de sécurité, merci de spécifier un code à 4 chiffres : ");
 	scanf("%s",admin->u_pin);
+	admin->u_rank = 4;
 
 	printf("Enregistrement de l'utilisateur...\n");
 	f = fopen("users.crd","wb+");
