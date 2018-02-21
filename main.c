@@ -5,7 +5,7 @@
 #include "logger.h"
 #include "users.h"
 #include "db.h"
-//#include "backup.h"
+#include "backup.h"
 
 int main()
 {
@@ -36,6 +36,8 @@ int main()
     db = fopen("db.irm","rb");
     if (db == NULL) { regenDBFile(); }		//V�rifier si la base de donn�e existe, sinon la reconstruire
     fclose(db);
+
+    backupDB();
 
     u_login = fopen("users.crd","rb");
     if (u_login == NULL) { u_newSetup(); }
