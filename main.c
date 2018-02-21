@@ -1,12 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "header.h"
 #include "logger.h"
 #include "db.h"
+//#include "backup.h"
 
 int main()
 {
-    printf(" *******************\n *  ISEN RM v2.00  *\n *******************\n\n");
+    printf(" *******************\n *  ISEN RM v1.00  *\n *******************\n\n");
 
     char* NameLogin="identifiant.txt";
     int taille = 0; //taille temporaire du tableau de fiches
@@ -28,12 +30,58 @@ int main()
     	printf("\n\nATTENTION ! Le fichier de log ne peut etre ecrit, aucune info ne sera enregistree !\n\n");
     }
 
-    db = fopen("db.irm","r");
+    db = fopen("db.irm","rb");
+
     if (db == NULL) {regenDBFile();}		//V�rifier si la base de donn�e existe, sinon la reconstruire
     fclose(db);
 
     my_app=malloc(sizeof(int)*taille);
     if(my_app==NULL){printf("Pb\n");return -1;}
+
+
+	FICHE *test = malloc(sizeof(FICHE));
+	printf("ID to write: ");
+	scanf("%s",test->ID);
+	strcpy(test->CPU,"Core i3");
+	strcpy(test->MEM,"2G");
+	strcpy(test->HDD,"250G");
+	strcpy(test->Nom,"TEST-bouzepc-db");
+	strcpy(test->OS,"NUXNUX\0");
+	test->Etat = 0x0011;
+
+	addCard(test);
+
+	char id[11];
+	FICHE *ddump = malloc(sizeof(FICHE));
+	printf("Enter an ID to be read : ");
+	scanf("%s",id);
+
+	readCard(id,ddump);
+
+	printf("Nom : %s\nEtat : %d\nCPU : %s\nMEM : %s\nHDD : %s\nOS : %s\n",ddump->Nom,ddump->Etat,ddump->CPU,ddump->MEM,ddump->HDD,ddump->OS);
+
+	free(ddump);
+
+	printf("Enter an ID to be deleted : ");
+	scanf("%s",id);
+
+	delCard(id);
+
+	printf("ID to rewrite: ");
+	scanf("%s",test->ID);
+	strcpy(test->CPU,"Quad Core X15");
+	strcpy(test->MEM,"8G");
+	strcpy(test->HDD,"1T");
+	strcpy(test->Nom,"TEST-ultimatesexemachine-db");
+	strcpy(test->OS,"RECODED");
+	test->Etat = 0x1111;
+
+	editCard(test);
+
+	return 0;
+
+
+/*
 
     do {
             do {
@@ -41,7 +89,18 @@ int main()
                 printf(" Veuillez entrer le type d'utilisateur.\n\n");
                 printf(" 1 | Technicien\n 2 | Responsable Inventaire\n 3 | Valideur\n 4 | Quitter le programme\n\n Champ de selection : ");
                 scanf(" %d", &choix);
-                }
+
+
+    do {
+            do {
+                printf("\n**ISEN RM**\n\nMENU\n");
+                printf("Type d'utilisateur ?\n");
+                printf("1/ Technicien\n");
+                printf("2/ Responsable Inventaire\n");
+                printf("3/ Valideur\n");
+                printf("4/ Quitter le programme");
+                printf("Votre choix ?\n");
+                scanf("%d", &choix);
 
                 while (choix < 1 || choix > 4);
                 switch (choix)
@@ -185,7 +244,7 @@ int supprimePC(FICHE *F, char *ID)
 
 	if (trouve == 0) return 0;
 
-	printf("fiche trouvee\n");
+	printf("fiche trouvée\n");
 
 	while(fscanf(f,"%s\n",F->Nom)!=EOF)
 	{

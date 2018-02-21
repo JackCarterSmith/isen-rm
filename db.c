@@ -6,7 +6,7 @@
  *
  *      DB Core
  */
-#define VERSION 1.0
+#define VERSION 1.3
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -25,11 +25,11 @@ int regenDBFile(){
 	 * 	</FICHEx>
 	 * </DATA>
 	 *
-	 * Contenu de l'en-tÍte :
+	 * Contenu de l'en-t√™te :
 	 * Version de la DB (float)
-	 * Nombre d'entrÈes (int)
-	 * Compteur 1 (int)
-	 * Compteur 2 (int)
+	 * Nombre d'entr√©es (int)
+	 * Compteur de pc r√©par√© totaux (uint)
+	 * Compteur de pc pr√™t √† √™tre exp√©di√© (uint)
 	 */
 	FILE *db = NULL;
 	HEAD default_head_data;
@@ -38,14 +38,14 @@ int regenDBFile(){
 	if (db != NULL){
 		default_head_data.version_db = VERSION;
 		default_head_data.nbr_fiches = 0;
-		default_head_data.cpt1 = 0;
-		default_head_data.cpt2 = 0;
+		default_head_data.cpt_rep_total = 0;
+		default_head_data.cpt_ready2go = 0;
 		fwrite(&default_head_data, sizeof(HEAD), 1, db);
 
 		fclose(db);
 	} else {
 		addLogCritical("DB creation failure !");
-		return -1;		//ProblËme dans la lecture du fichier
+		return 1;		//Probl√®me dans la lecture du fichier
 	}
 
 	addLogInfo("DB regenerated !");
@@ -60,57 +60,103 @@ int getConfig(HEAD *h) {
 		fread(h, sizeof(HEAD), 1, db);
 		fclose(db);
 	} else {
-		return -1;		//ProblËme dans la lecture du fichier
-		//Ajouter d'une entrÈe dans le log !
+		return 1;		//Probl√®me dans la lecture du fichier
+		//Ajouter d'une entr√©e dans le log !
 	}
 
 	return 0;
 }
 
-int addCard(FICHE data){
+int getConfigF(HEAD *h, char db_file[]) {
 	FILE *db = NULL;
-	HEAD *h = NULL;
+
+	db = fopen(db_file,"rb");
+	if (db != NULL) {
+		fread(h, sizeof(HEAD), 1, db);
+		fclose(db);
+	} else {
+		return 1;		//Probl√®me dans la lecture du fichier
+		//Ajouter d'une entr√©e dans le log !
+	}
+
+	return 0;
+}
+
+int checkIDExist(char id[], unsigned short int max_fiches, FILE *f) {
+	int i;
+	FICHE dump;
+
+	fseek(f, sizeof(HEAD), SEEK_SET);
+	for (i = 0; i < max_fiches; i++) {
+		fread(&dump, sizeof(FICHE), 1, f);
+		if ( strcmp(dump.ID, id) == 0 ) { return 1; }	//Retourne 1 si l'id est pr√©sent
+	}
+	return 0;	//0 dans le cas contraire
+}
+
+int addCard(FICHE *data){
+	FILE *db = NULL;
+	HEAD *h = malloc(sizeof(HEAD));
+	char *logIDrecord = malloc(sizeof(char)*64);
 
 	if (getConfig(h) != 0) {
-		addLogCritical("Erreur de lecture de l'en-tÍte de la DB !");
-		return -1;		//ProblËme dans la lecture du fichier
+		addLogCritical("Add: Erreur de lecture de l'en-t√™te de la DB !");
+		free(h);
+		free(logIDrecord);
+		return 1;		//Probl√®me dans la lecture de l'ent√™te du fichier
 	}
 	h->nbr_fiches += 1;
 
 	db = fopen("db.irm","rb+");
 	if (db != NULL){
-		fseek(db, 0, SEEK_SET);
-		fwrite(h, sizeof(HEAD), 1, db);
+		fseek(db, sizeof(float), SEEK_SET);
+		fwrite(&h->nbr_fiches, sizeof(unsigned short int), 1, db);
 
 		fseek(db, 0, SEEK_END);
-		fwrite(&data, sizeof(FICHE), 1, db);
+		fwrite(data, sizeof(FICHE), 1, db);
+		sprintf(logIDrecord,"Add: Fiche [%s] ajout√©e avec succ√©s dans la DB.",data->ID);
+		addLogInfo(logIDrecord);
 	} else {
-		addLogCritical("Erreur lors de l'ajout de la fiche dans la DB !");
-		return -2;		//ProblËme dans la lecture du fichier
+		addLogCritical("Add: Erreur lors de l'ajout de la fiche dans la DB !");
+		free(h);
+		free(logIDrecord);
+		return 2;		//Probl√®me dans la lecture du fichier
 	}
 
+	free(h);
+	free(logIDrecord);
 	fclose(db);
-	addLogInfo("Fiche ajoutÈe avec succËs dans la DB.");
 	return 0;
 }
 
 int delCard(char id[]){
 	FILE *db = NULL;
-	HEAD *h = NULL;
+	HEAD *h = malloc(sizeof(HEAD));
+	char *logIDrecord = malloc(sizeof(char)*64);
 	int i;
 
 	if (getConfig(h) != 0) {
-		addLogCritical("Erreur de lecture de l'en-tÍte de la DB !");
-		return -1;		//ProblËme dans la lecture du fichier
+		addLogCritical("Del: Erreur de lecture de l'en-t√™te de la DB !");
+		free(h);
+		free(logIDrecord);
+		return 1;		//Probl√®me dans la lecture du fichier
 	}
 	FICHE dump[h->nbr_fiches];
 
-	db = fopen("db.irm","rb+");
+	db = fopen("db.irm","rb");
 	if (db != NULL){
+		if ( checkIDExist(id,h->nbr_fiches,db) == 0) {
+			free(h);
+			free(logIDrecord);
+			fclose(db);
+			addLogWarn("Del: L'id de la fiche sp√©cifi√© n'est pas enregistr√©.");
+			return 2;			//Aucun fichier dans la DB correspond √† l'ID sp√©cifi√©
+		}
 		fseek(db, sizeof(HEAD), SEEK_SET);
-		fread(dump, sizeof(FICHE), h->nbr_fiches, db);		//Le coeur de la function de dump des fiches en mÈmoire
+		fread(dump, sizeof(FICHE), h->nbr_fiches, db);		//Le coeur de la function de dump des fiches en m√©moire
 
 		h->nbr_fiches -= 1;
+		db = freopen("db.irm","wb",db);
 		fseek(db, 0, SEEK_SET);
 		fwrite(h, sizeof(HEAD), 1, db);
 
@@ -120,63 +166,98 @@ int delCard(char id[]){
 			}
 		}
 	} else {
-		addLogCritical("Erreur lors de la suppression de la fiche dans la DB !");
-		return -2;		//ProblËme dans la lecture du fichier
+		free(h);
+		free(logIDrecord);
+		addLogCritical("Del: Erreur lors de la suppression de la fiche dans la DB !");
+		return 3;		//Probl√®me dans la lecture du fichier
 	}
 
+	sprintf(logIDrecord,"Del: Fiche %s supprim√©e avec succ√©s dans la DB.",id);
+	addLogInfo(logIDrecord);
+	free(h);
+	free(logIDrecord);
 	fclose(db);
-	addLogInfo("Fiche supprimÈe avec succËs dans la DB.");
 	return 0;
 }
 
 int readCard(char id[], FICHE *f){
-	FICHE *card = NULL;
 	FILE *db = NULL;
-	HEAD *h = NULL;
+	HEAD *h = malloc(sizeof(HEAD));
 	int i;
 
 	if (getConfig(h) != 0) {
-		addLogCritical("Erreur de lecture de l'en-tÍte de la DB !");
-		return -1;		//ProblËme dans la lecture du fichier
+		addLogCritical("Read: Erreur de lecture de l'en-t√™te de la DB !");
+		free(h);
+		return 1;		//Probl√®me dans la lecture du fichier
 	}
 
 	db = fopen("db.irm","rb");
 	if (db != NULL){
+		if ( checkIDExist(id,h->nbr_fiches,db) == 0) {
+			strcpy(f->CPU,"N/A");
+			strcpy(f->MEM,"N/A");
+			strcpy(f->HDD,"N/A");
+			strcpy(f->Nom,"ERROR");
+			strcpy(f->OS,"N/A");
+			f->Etat = 0;
+			free(h);
+			fclose(db);
+			addLogWarn("Read: L'id de la fiche sp√©cifi√© n'est pas enregistr√©.");
+			return 2;			//Aucun fichier dans la DB correspond √† l'ID sp√©cifi√©
+		}
 		fseek(db, sizeof(HEAD), SEEK_SET);
 		for (i = 0; i < ((h->nbr_fiches) + 1); i++ ) {
-			fread(card, sizeof(FICHE), 1, db);
+			fread(f, sizeof(FICHE), 1, db);
 
-			if ( strcmp(card->ID, id) == 0 ) {
+			if ( strcmp(f->ID, id) == 0 ) {
+				free(h);
 				fclose(db);
-				addLogInfo("Fiche rÈcupÈrÈe avec succËs dans la DB.");
+				addLogInfo("Read: Fiche r√©cup√©r√©e avec succ√©s dans la DB.");
 				return 0;
 			}
 		}
-
-		fclose(db);
 	} else {
-		addLogCritical("Erreur lors de la lecture de la fiche dans la DB !");
-		return -2;		//ProblËme dans la lecture du fichier
+		addLogCritical("Read: Erreur lors de la lecture de la fiche dans la DB !");
+		free(h);
+		return 2;		//Probl√®me dans la lecture du fichier
 	}
 
+	strcpy(f->CPU,"N/A");
+	strcpy(f->MEM,"N/A");
+	strcpy(f->HDD,"N/A");
+	strcpy(f->Nom,"ERROR");
+	strcpy(f->OS,"N/A");
+	f->Etat = 0;
+	free(h);
 	fclose(db);
-	return -1;			//Aucun fichier dans la DB correspond ‡ l'ID spÈcifiÈ
-	addLogWarn("L'id de la fiche spÈcifiÈ n'est pas enregistrÈ.");
+	addLogCritical("Read: ID data value corrupted!");
+	return 3;		//Erreur interne, id corrompu
 }
 
 int editCard(FICHE *data){
 	FILE *db = NULL;
-	FICHE *card = NULL;
-	HEAD *h = NULL;
+	FICHE *card = malloc(sizeof(FICHE));
+	HEAD *h = malloc(sizeof(HEAD));
+	char *logIDrecord = malloc(sizeof(char)*64);
 	int i;
 
 	if (getConfig(h) != 0) {
-		addLogCritical("Erreur de lecture de l'en-tÍte de la DB !");
-		return -1;		//ProblËme dans la lecture du fichier
+		addLogCritical("Edit: Erreur de lecture de l'en-t√™te de la DB !");
+		free(h);
+		free(card);
+		return 1;		//Probl√®me dans la lecture du fichier
 	}
 
 	db = fopen("db.irm","rb+");
 	if (db != NULL){
+		if ( checkIDExist(data->ID,h->nbr_fiches,db) == 0) {
+			free(h);
+			free(logIDrecord);
+			free(card);
+			fclose(db);
+			addLogWarn("Edit: L'id de la fiche sp√©cifi√© n'est pas enregistr√©.");
+			return 2;			//Aucun fichier dans la DB correspond √† l'ID sp√©cifi√©
+		}
 		fseek(db, sizeof(HEAD), SEEK_SET);
 		for (i = 0; i < ((h->nbr_fiches) + 1); i++ ) {
 			fread(card, sizeof(FICHE), 1, db);
@@ -186,20 +267,29 @@ int editCard(FICHE *data){
 				fseek(db, sizeof(FICHE) * i, SEEK_CUR);
 				fwrite(data, sizeof(FICHE), 1, db);
 
+				sprintf(logIDrecord,"Edit: Fiche [%s] √©dit√©e avec succ√©s dans la DB.",data->ID);
+				addLogInfo(logIDrecord);
+
 				fclose(db);
-				addLogInfo("Fiche ÈditÈe avec succËs dans la DB.");
+				free(h);
+				free(logIDrecord);
+				free(card);
 				return 0;
 			}
 		}
-
-		fclose(db);
 	} else {
-		addLogCritical("Erreur lors de l'Èdition de la fiche dans la DB !");
-		return -2;		//ProblËme dans la lecture du fichier
+		addLogCritical("Edit: Erreur lors de l'√©dition de la fiche dans la DB !");
+		free(h);
+		free(logIDrecord);
+		free(card);
+		return 3;		//Probl√®me dans la lecture du fichier
 	}
 
+	free(h);
+	free(logIDrecord);
+	free(card);
 	fclose(db);
-	addLogCritical("ID data value corrupted!");
-	return -3;		//Erreur interne, id corrompu
+	addLogCritical("Edit: ID data value corrupted!");
+	return 4;		//Erreur interne, id corrompu
 }
 
