@@ -69,7 +69,10 @@ int main()
 	strcpy(test->HDD,"250G");
 	strcpy(test->Nom,"TEST-bouzepc-db");
 	strcpy(test->OS,"NUXNUX\0");
-	test->Etat = 0x0011;
+	test->etat.Hardware = 1;
+	test->etat.OS = 1;
+	test->etat.Drivers = 0;
+	test->etat.Software = 0;
 
 	addCard(test);
 
@@ -80,7 +83,7 @@ int main()
 
 	readCard(id,ddump);
 
-	printf("Nom : %s\nEtat : %d\nCPU : %s\nMEM : %s\nHDD : %s\nOS : %s\n",ddump->Nom,ddump->Etat,ddump->CPU,ddump->MEM,ddump->HDD,ddump->OS);
+	printf("Nom : %s\nEtat : %d%d%d%d\nCPU : %s\nMEM : %s\nHDD : %s\nOS : %s\n",ddump->Nom,ddump->etat.Hardware,ddump->etat.OS,ddump->etat.Drivers,ddump->etat.Software,ddump->CPU,ddump->MEM,ddump->HDD,ddump->OS);
 
 	free(ddump);
 
@@ -96,12 +99,16 @@ int main()
 	strcpy(test->HDD,"1T");
 	strcpy(test->Nom,"TEST-ultimatesexemachine-db");
 	strcpy(test->OS,"RECODED");
-	test->Etat = 0x1111;
+	test->etat.Hardware = 1;
+	test->etat.OS = 1;
+	test->etat.Drivers = 1;
+	test->etat.Software = 1;
 
 	editCard(test);
 
 	return 0;
 
+}
 
 /*
 

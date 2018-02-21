@@ -37,6 +37,7 @@ void u_newSetup() {
 	printf("Succès ! Merci de redémarrer l'application\n");
 	addLogInfo("Création du fichier utilisateur avec succès !");
 	free(admin);
+	exit(0);
 }
 
 int userLogin(USER *u) {

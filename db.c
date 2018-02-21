@@ -199,7 +199,10 @@ int readCard(char id[], FICHE *f){
 			strcpy(f->HDD,"N/A");
 			strcpy(f->Nom,"ERROR");
 			strcpy(f->OS,"N/A");
-			f->Etat = 0;
+			f->etat.Hardware = 0;
+			f->etat.OS = 0;
+			f->etat.Drivers = 0;
+			f->etat.Software = 0;
 			free(h);
 			fclose(db);
 			addLogWarn("Read: L'id de la fiche spécifié n'est pas enregistré.");
@@ -227,7 +230,10 @@ int readCard(char id[], FICHE *f){
 	strcpy(f->HDD,"N/A");
 	strcpy(f->Nom,"ERROR");
 	strcpy(f->OS,"N/A");
-	f->Etat = 0;
+	f->etat.Hardware = 0;
+	f->etat.OS = 0;
+	f->etat.Drivers = 0;
+	f->etat.Software = 0;
 	free(h);
 	fclose(db);
 	addLogCritical("Read: ID data value corrupted!");
@@ -291,5 +297,49 @@ int editCard(FICHE *data){
 	fclose(db);
 	addLogCritical("Edit: ID data value corrupted!");
 	return 4;		//Erreur interne, id corrompu
+}
+
+int sortReadyCard(FICHE *tab_f){
+	FILE *db = NULL;
+	HEAD *h = malloc(sizeof(HEAD));
+	int i;
+	int j = 0;
+
+	if (getConfig(h) != 0) {
+		addLogCritical("SrtRdyCard: Erreur de lecture de l'en-tête de la DB !");
+		free(h);
+		return -1;		//Problème dans la lecture du fichier
+	}
+
+	db = fopen("db.irm","rb");
+	if (db != NULL){
+		fseek(db, sizeof(HEAD), SEEK_SET);
+		for (i = 0; i < ((h->nbr_fiches) + 1); i++ ) {
+			fread(&tab_f[j], sizeof(FICHE), 1, db);
+			if ( tab_f[j].etat.Hardware == 1 && tab_f[j].etat.OS == 1 && tab_f[j].etat.Drivers == 1 && tab_f[j].etat.Software == 1 ) {
+				j = j + 1;
+			}
+		}
+	} else {
+		addLogCritical("SrtRdyCard: Erreur lors de la lecture de la fiche dans la DB !");
+		free(h);
+		return -2;		//Problème dans la lecture du fichier
+	}
+
+	free(h);
+	fclose(db);
+	updateRdyCpt(j);
+	return j;		//Retourne le nombre de fiche
+}
+
+void updateRdyCpt(int c){
+	FILE *db = NULL;
+
+	db = fopen("db.irm","rb+");
+	if (db != NULL) {
+		fseek(db,sizeof(float) + sizeof(unsigned short int) + sizeof(unsigned int),SEEK_SET);
+		fwrite(&c,sizeof(int),1,db);
+		fclose(db);
+	}
 }
 
