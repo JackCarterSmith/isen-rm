@@ -63,7 +63,7 @@ int backupDB() {
 		}
 		fseek(bck, 0, SEEK_SET);
 		fwrite(h, sizeof(HEAD), 1, bck);
-		for (i = 1; i < (h->nbr_fiches); i++ ) {
+		for (i = 0; i < (h->nbr_fiches); i++ ) {
 		//for (i = 0; i < sizeof(dump); i++ ) {
 			fwrite(&dump[i], sizeof(FICHE), 1, bck);
 		}
@@ -119,7 +119,7 @@ int restoreDB(int day, int mounth, int year) {
 		}
 		fseek(db, 0, SEEK_SET);
 		fwrite(h, sizeof(HEAD), 1, db);
-		for (i = 1; i < (h->nbr_fiches); i++ ) {
+		for (i = 0; i < (h->nbr_fiches); i++ ) {
 		//for (i = 0; i < sizeof(dump); i++ ) {
 			fwrite(&dump[i], sizeof(FICHE), 1, db);
 		}
