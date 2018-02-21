@@ -3,6 +3,7 @@
 #include <string.h>
 #include "header.h"
 #include "logger.h"
+#include "users.h"
 #include "db.h"
 //#include "backup.h"
 
@@ -20,6 +21,8 @@ int main()
     //int choixRespInventaire;
     //int *my_app=NULL
     FILE *db = NULL;
+    FILE *u_login = NULL;
+    USER *u = malloc(sizeof(USER));
     FICHE *monF;
     STAT *monA;
     LOGIN *monL;
@@ -31,9 +34,28 @@ int main()
     }
 
     db = fopen("db.irm","rb");
-
-    if (db == NULL) {regenDBFile();}		//V�rifier si la base de donn�e existe, sinon la reconstruire
+    if (db == NULL) { regenDBFile(); }		//V�rifier si la base de donn�e existe, sinon la reconstruire
     fclose(db);
+
+    u_login = fopen("users.crd","rb");
+    if (u_login == NULL) { u_newSetup(); }
+    fclose(u_login);
+
+	printf("u_ID to write: ");
+	scanf("%s",u->u_id);
+	printf("u_PIN to write: ");
+	scanf("%s",u->u_pin);
+	printf("u_rank to write (0-4): ");
+	scanf("%d",&(u->u_rank));
+
+    int process;
+	process = addUser(u);
+	printf("Result : %d", process);
+
+	return 0;
+
+
+
 
     my_app=malloc(sizeof(int)*taille);
     if(my_app==NULL){printf("Pb\n");return -1;}
