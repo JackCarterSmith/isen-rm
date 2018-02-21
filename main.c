@@ -9,25 +9,9 @@
 
 int main()
 {
+	FILE *db = NULL;
+
     printf(" *******************\n *  ISEN RM v1.00  *\n *******************\n\n");
-
-    char* NameLogin="identifiant.txt";
-    int taille = 0; //taille temporaire du tableau de fiches
-    int Exp = 0;
-    int *my_app=NULL;
-    int choix;
-    int choixValideur;
-    //int choixTechnicien;
-    //int choixRespInventaire;
-    //int *my_app=NULL
-    FILE *db = NULL;
-    FILE *u_login = NULL;
-    USER *u = malloc(sizeof(USER));
-    FICHE *monF;
-    STAT *monA;
-    LOGIN *monL;
-
-    compareLogin(NameLogin);
 
     if (initialise_logger() != 0) {			//Initialise le logger et v�rifie qu'il a bien d�marr�
     	printf("\n\nATTENTION ! Le fichier de log ne peut etre ecrit, aucune info ne sera enregistree !\n\n");
@@ -39,31 +23,19 @@ int main()
 
     backupDB();
 
+    /*
     u_login = fopen("users.crd","rb");
     if (u_login == NULL) { u_newSetup(); }
     fclose(u_login);
+    */
 
-	printf("u_ID to write: ");
-	scanf("%s",u->u_id);
-	printf("u_PIN to write: ");
-	scanf("%s",u->u_pin);
-	printf("u_rank to write (0-4): ");
-	scanf("%d",&(u->u_rank));
+    int taille;
+    FICHE *tab = NULL;
+    taille = sortReadyCard(tab);
 
-    int process;
-	process = addUser(u);
-	printf("Result : %d", process);
+    printf("Taille du tableau : %d\n",taille);
 
-	return 0;
-
-
-
-
-    my_app=malloc(sizeof(int)*taille);
-    if(my_app==NULL){printf("Pb\n");return -1;}
-
-
-	FICHE *test = malloc(sizeof(FICHE));
+    FICHE *test = malloc(sizeof(FICHE));
 	printf("ID to write: ");
 	scanf("%s",test->ID);
 	strcpy(test->CPU,"Core i3");
@@ -108,11 +80,11 @@ int main()
 
 	editCard(test);
 
+	if (tab != NULL) {free(tab);}
 	return 0;
-
 }
-
 /*
+
 
     do {
             do {
@@ -331,4 +303,4 @@ int compareLogin(char *fichierLogin)
 
 	fclose(login);
 	return 0;
-}
+}*/

@@ -95,7 +95,7 @@ int restoreDB(int day, int mounth, int year) {
 
 	sprintf(name, "db_%04d-%02d-%02d.bck", year, mounth, day);
 	if (getConfigF(h,name) != 0) {
-		addLogCritical("Recovery: Erreur de lecture de l'en-tête de la DB !");
+		addLogCritical("Recovery: Erreur de lecture de l'en-tête de la DB, fichier manquant ou endommagé.");
 		free(h);
 		return 1;		//Problème dans la lecture du fichier
 	}

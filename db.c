@@ -301,13 +301,15 @@ int editCard(FICHE *data){
 
 int sortReadyCard(FICHE *tab_f){
 	FILE *db = NULL;
+	FICHE *buffer = malloc(sizeof(FICHE));
 	HEAD *h = malloc(sizeof(HEAD));
 	int i;
-	int j = 0;
+	int t = 0;
 
 	if (getConfig(h) != 0) {
 		addLogCritical("SrtRdyCard: Erreur de lecture de l'en-tête de la DB !");
 		free(h);
+		free(buffer);
 		return -1;		//Problème dans la lecture du fichier
 	}
 
@@ -315,21 +317,25 @@ int sortReadyCard(FICHE *tab_f){
 	if (db != NULL){
 		fseek(db, sizeof(HEAD), SEEK_SET);
 		for (i = 0; i < ((h->nbr_fiches) + 1); i++ ) {
-			fread(&tab_f[j], sizeof(FICHE), 1, db);
-			if ( tab_f[j].etat.Hardware == 1 && tab_f[j].etat.OS == 1 && tab_f[j].etat.Drivers == 1 && tab_f[j].etat.Software == 1 ) {
-				j = j + 1;
+			fread(buffer, sizeof(FICHE), 1, db);
+			if ( buffer->etat.Hardware == 1 && buffer->etat.OS == 1 && buffer->etat.Drivers == 1 && buffer->etat.Software == 1 ) {
+				t = t + 1;
 			}
 		}
-	} else {
-		addLogCritical("SrtRdyCard: Erreur lors de la lecture de la fiche dans la DB !");
-		free(h);
-		return -2;		//Problème dans la lecture du fichier
+		buffer = realloc(buffer,sizeof(FICHE) * t);
+		for (i = 0; i < ((h->nbr_fiches) + 1); i++ ) {
+			fread(buffer+t, sizeof(FICHE), 1, db);
+			if ( (buffer+t)->etat.Hardware == 1 && (buffer+t)->etat.OS == 1 && (buffer+t)->etat.Drivers == 1 && (buffer+t)->etat.Software == 1 ) {
+				t = t + 1;
+			}
+		}
+		fclose(db);
 	}
 
+	tab_f = buffer;
 	free(h);
-	fclose(db);
-	updateRdyCpt(j);
-	return j;		//Retourne le nombre de fiche
+	updateRdyCpt(t);
+	return t;		//Retourne le nombre de fiche
 }
 
 void updateRdyCpt(int c){
