@@ -21,7 +21,6 @@ int backupDB() {
 	FILE *db = NULL;
 	FILE *bck = NULL;
 	HEAD *h = malloc(sizeof(HEAD));
-	FICHE dump[h->nbr_fiches];
 
 	if (getConfig(h) != 0) {
 		addLogCritical("BackUP: Erreur de lecture de l'en-tête de la DB !");
@@ -35,6 +34,8 @@ int backupDB() {
 		free(h);
 		return 0;
 	}
+
+	FICHE *dump = malloc(sizeof(FICHE) * h->nbr_fiches);
 
 	db = fopen("db.irm","rb");
 	if (db != NULL){
@@ -50,6 +51,7 @@ int backupDB() {
 			scanf(" %c", &confirm);
 			if (confirm == 'N') {
 				addLogWarn("BackUP: Bypass sauvegarde de démarrage.");
+				free(dump);
 				free(h);
 				return 2;
 			} 			//Bypass backup procedure
@@ -58,6 +60,7 @@ int backupDB() {
 		bck = fopen(name,"wb+");
 		if (bck == NULL) {
 			addLogCritical("BackUP: Erreur création fichier backup.");
+			free(dump);
 			free(h);
 			return 3;
 		}
@@ -70,11 +73,13 @@ int backupDB() {
 		fclose(bck);
 	} else {
 		addLogWarn("BackUP: DB absente, abandon.");
+		free(dump);
 		free(h);
 		return 4;
 	}
 
 	addLogInfo("BackUP: Création avec succès de la sauvegarde.");
+	free(dump);
 	free(h);
 	return 0;
 }
@@ -87,7 +92,6 @@ int restoreDB(int day, int mounth, int year) {
 	FILE *db = NULL;
 	FILE *bck = NULL;
 	HEAD *h = malloc(sizeof(HEAD));
-	FICHE dump[h->nbr_fiches];
 
 	sprintf(name, "db_%04d-%02d-%02d.bck", year, mounth, day);
 	if (getConfigF(h,name) != 0) {
@@ -95,6 +99,8 @@ int restoreDB(int day, int mounth, int year) {
 		free(h);
 		return 1;		//Problème dans la lecture du fichier
 	}
+
+	FICHE *dump = malloc(sizeof(FICHE) * h->nbr_fiches);
 
 	bck = fopen(name,"rb");
 	if (bck != NULL){
@@ -107,6 +113,7 @@ int restoreDB(int day, int mounth, int year) {
 		scanf(" %c", &confirm);
 		if (confirm == 'N') {
 			addLogWarn("Recovery: Annulation procédure de restauration.");
+			free(dump);
 			free(h);
 			return 2;
 		} 			//Cancel restoring
@@ -114,6 +121,7 @@ int restoreDB(int day, int mounth, int year) {
 		db = fopen("db.irm","wb+");
 		if (db == NULL) {
 			addLogCritical("Recovery: Impossible d'ouvrir la DB.");
+			free(dump);
 			free(h);
 			return 3;
 		}
@@ -127,6 +135,7 @@ int restoreDB(int day, int mounth, int year) {
 	}
 
 	addLogInfo("Recovery: Restauration avec succès de la DB.");
+	free(dump);
 	free(h);
 	return 0;
 }
