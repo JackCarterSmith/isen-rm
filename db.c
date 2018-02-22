@@ -6,7 +6,7 @@
  *
  *      DB Core
  */
-#define VERSION 1.3
+#define VERSION 1.5
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>

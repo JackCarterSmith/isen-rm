@@ -32,6 +32,7 @@ typedef struct fiche { //En gros, la config du PC.
     char MEM[8];
     char OS[32];
     ETAT etat; 	//Par défaut 0x0 soit 0000 en base 2
+    int locked;
 }FICHE;
 
 extern FICHE Fiche;

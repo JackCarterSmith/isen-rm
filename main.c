@@ -14,11 +14,11 @@ int main()
 	FILE *u_login = NULL;
 
 	USER *u = malloc(sizeof(USER));
-
-	HEAD *conf = malloc(sizeof(HEAD));
+	FICHE *u_dump = NULL;
 
 	char choice;
 	int sub_choice = 0;
+	int nbr_cardRdy = 0;
 
 
 	if (initialise_logger() != 0) {			//Initialise le logger et vérifie qu'il a bien démarré
@@ -60,27 +60,96 @@ int main()
 			printf("\n\n\n\n\n\n\n\n\n\nBienvenue Technicien [%s], vous pouvez accéder aux fiches PC pour les édités.\n", u->u_id);
 			printf(" #================================#\n |    Menu Technicien    |\n #===========================#\n\n");
 			do {
-				printf(" ");
+				printf("   [1] - Edition fiche PC\n   [2] - Consulter une fiche PC\n   [3] - Consulter le nombre de PC en stock\n\n");
+				printf(" Spécifier le numéro d'action à lancer : ");
 				scanf("%d",&sub_choice);
-			} while (sub_choice > 0 && sub_choice < 4);
+			} while (sub_choice <= 0 && sub_choice > 3);
 
+			switch (sub_choice) {
+			case 1:
+				break;
+			case 2:
+				break;
+			case 3:
+				break;
+			}
 		break;
 		case 2:		//Menu responsable inventaire
 			printf("\n\n\n\n\n\n\n\n\n\nBienvenue Responsable inventaire [%s], vous pouvez accéder aux ajouts et suppression des fiches PC.\n", u->u_id);
+			printf(" #================================#\n |    Menu Rep.Inv    |\n #===========================#\n\n");
+			do {
+				printf("   [1] - Ajouter une nouvelle fiche PC\n   [2] - Supprimer une fiche PC\n   [3] - Consulter une fiche PC\n   [4] - Consulter le nombre de PC en stock\n   [5] - Consulter le nombre de PC prêt à être utilisé\n\n");
+				printf(" Spécifier le numéro d'action à lancer : ");
+				scanf("%d",&sub_choice);
+			} while (sub_choice <= 0 && sub_choice > 5);
 
+			switch (sub_choice) {
+			case 1:
+				break;
+			case 2:
+				break;
+			case 3:
+				break;
+			case 4:
+				break;
+			case 5:
+				break;
+			}
 		break;
 		case 3:		//Menu validateur
 			printf("\n\n\n\n\n\n\n\n\n\nBienvenue Validateur [%s], vous pouvez accéder aux procédures de validation des PC.\n", u->u_id);
+			printf(" #================================#\n |    Menu Validateur   |\n #===========================#\n\n");
+			do {
+				printf("   [1] - Valider et verrouiller une fiche PC\n   [2] - Consulter une fiche PC\n   [3] - Consulter le nombre de PC en stock\n   [4] - Consulter le nombre de PC prêt à être utilisé\n\n");
+				printf(" Spécifier le numéro d'action à lancer : ");
+				scanf("%d",&sub_choice);
+			} while (sub_choice <= 0 && sub_choice > 4);
 
+			switch (sub_choice) {
+			case 1:
+				break;
+			case 2:
+				break;
+			case 3:
+				break;
+			case 4:
+				break;
+			}
 		break;
 		case 4:		//Menu admin
 			printf("\n\n\n\n\n\n\n\n\n\nBienvenue Administrateur, vous pouvez accéder à toutes les fonctions du programme.\n");
+			printf(" #================================#\n |    Menu Technicien    |\n #===========================#\n\n");
+			do {
+				printf("   [1] - Ajouter une nouvelle fiche PC\n   [2] - Supprimer une fiche PC\n   [3] - Consulter une fiche PC\n   [4] - Edition fiche PC\n   [5] - Valider et verrouiller une fiche PC\n   [6] - Consulter le nombre de PC en stock\n   [7] - Consulter le nombre de PC prêt à être utilisé\n   [8] - Ajouter un utilisateur\n   [9] - Supprimer un utilisateur\n\n");
+				printf(" Spécifier le numéro d'action à lancer : ");
+				scanf("%d",&sub_choice);
+			} while (sub_choice <= 0 && sub_choice > 9);
 
+			switch (sub_choice) {
+			case 1:
+				break;
+			case 2:
+				break;
+			case 3:
+				break;
+			case 4:
+				break;
+			case 5:
+				break;
+			case 6:
+				break;
+			case 7:
+				break;
+			case 8:
+				break;
+			case 9:
+				break;
+			}
 		break;
 		default:	//Menu visiteur
-			if (getConfig(conf) == 1) {conf->cpt_rep_total = 0;}
+			nbr_cardRdy = sortReadyCard(u_dump);
 			printf("\n\n\n\n\n\n\n\n\n\nBienvenue Visiteur, vous pouvez accéder aux derniers chiffres de l'association.\n");
-			printf(" #================================#\n |    PC total réparé : %d   |\n #===========================#\n\n",conf->cpt_rep_total);
+			printf(" #================================#\n |    PC total réparé : %d   |\n #===========================#\n\n",nbr_cardRdy);
 		}
 
 		printf("Retour écran de login ? (y/n)");
