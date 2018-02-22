@@ -73,25 +73,75 @@ void sub_readCard() {
 		printf("Une erreur s'est produite, consulter les logs pour plus de détails.\n\n");
 	} else {
 		printf("Nom : %s\nEtat (Hardware-OS-Drivers-Software) : (%d-%d-%d-%d)\nCPU : %s\nMEM : %s\nHDD : %s\nOS : %s\n\n",ddump->Nom,ddump->etat.Hardware,ddump->etat.OS,ddump->etat.Drivers,ddump->etat.Software,ddump->CPU,ddump->MEM,ddump->HDD,ddump->OS);
-
 	}
 
 	free(ddump);
+
+	printf("Appuyer sur une touche pour continuer\n");
+	getchar();
 }
 
 void sub_editCard() {
+	FICHE *f = malloc(sizeof(FICHE));
+	char c;
 
+	printf("\n Edition d'une fiche PC\n ----------------------\n\n");
+	initCard(f);
+	do {
+		printf("\nEntrer l'ID du PC (10 chiffres) : ");
+		scanf("%s",f->ID);
+	} while (strlen(f->ID) != 10);
+
+	if (readCard(f->ID,f) != 0) {
+		printf("Une erreur s'est produite, consulter les logs pour plus de détails.\n\n");
+	} else {
+		printf("Nom : %s\nEtat (Hardware-OS-Drivers-Software) : (%d-%d-%d-%d)\nCPU : %s\nMEM : %s\nHDD : %s\nOS : %s\n\n",f->Nom,f->etat.Hardware,f->etat.OS,f->etat.Drivers,f->etat.Software,f->CPU,f->MEM,f->HDD,f->OS);
+		printf("\nPréciser le modèle du CPU : ");
+		while((c = getchar()) != '\n' && c != EOF)
+			/* discard */ ;
+		gets(f->CPU);
+		printf("\nPréciser la quantité de RAM : ");
+		gets(f->MEM);
+		printf("\nPréciser la capacité du HDD : ");
+		gets(f->HDD);
+		printf("\nPréciser l'OS : ");
+		gets(f->OS);
+		printf("\nEtat - Hardware (0 = NOK / 1 = OK) : ");
+		scanf("%d",&(f->etat.Hardware));
+		printf("\nEtat - OS (0 = NOK / 1 = OK) : ");
+		scanf("%d",&(f->etat.OS));
+		printf("\nEtat - Drivers (0 = NOK / 1 = OK) : ");
+		scanf("%d",&(f->etat.Drivers));
+		printf("\nEtat - Software (0 = NOK / 1 = OK) : ");
+		scanf("%d",&(f->etat.Software));
+
+		if (editCard(f) != 0) {
+			printf("Une erreur s'est produite, consulter les logs pour plus de détails.\n\n");
+		}
+	}
+
+	free(f);
 }
 
 void sub_validCard() {
+	char id[11];
 
+	printf("\n Validation fiche PC\n -------------------\n\n");
+	do {
+		printf("Entrer l'ID du PC à valider (10 chiffres) : ");
+		scanf("%s",id);
+	} while (strlen(id) != 10);
+
+	if (validCard(id) != 0) {
+		printf("Une erreur s'est produite, consulter les logs pour plus de détails.\n\n");
+	}
 }
 
 void sub_dispCptTot() {
 
 }
 
-void sub_dispCptRdy2Go() {
+void sub_dispRdy2Go() {
 
 }
 
@@ -254,7 +304,7 @@ int main()
 			do {
 				printf(" #================================================================================#\n |                               Menu Administrateur                              |\n #================================================================================#\n\n");
 				do {
-					printf("   [1] - Ajouter une nouvelle fiche PC\n   [2] - Supprimer une fiche PC\n   [3] - Consulter une fiche PC\n   [4] - Edition fiche PC\n   [5] - Valider et verrouiller une fiche PC\n   [6] - Consulter le nombre de PC en stock\n   [7] - Consulter le nombre de PC prêt à être utilisé\n   [8] - Ajouter un utilisateur\n   [9] - Supprimer un utilisateur\n   [0] - Logout\n\n");
+					printf("   [1] - Ajouter une nouvelle fiche PC\n   [2] - Supprimer une fiche PC\n   [3] - Consulter une fiche PC\n   [4] - Edition fiche PC\n   [5] - Valider et verrouiller une fiche PC\n   [6] - Consulter le nombre de PC en stock\n   [7] - Consulter le nombre de PC prêt à être utilisé et les affichés\n   [8] - Ajouter un utilisateur\n   [9] - Supprimer un utilisateur\n   [0] - Logout\n\n");
 					printf(" Spécifier le numéro d'action à lancer : ");
 					scanf("%d",&sub_choice);
 				} while (sub_choice < 0 && sub_choice > 9);
@@ -279,7 +329,7 @@ int main()
 					sub_dispCptTot();
 					break;
 				case 7:
-					sub_dispCptRdy2Go();
+					sub_dispRdy2Go();
 					break;
 				case 8:
 					sub_addUser();
