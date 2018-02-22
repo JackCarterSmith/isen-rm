@@ -92,6 +92,13 @@ int addUser(USER *u) {
 	unsigned int u_nbr = 1;
 	char *logIDrecord = malloc(sizeof(char)*64);
 
+	if (u->u_rank == 4) {
+		printf("Impossible de créer un autre compte admin, limite = 1.");
+		addLogWarn("AddUser: Ajout impossible d'un autre admin.");
+		free(logIDrecord);
+		return 1;
+	}
+
 	u_db = fopen("users.crd","rb+");
 	if (u_db != NULL) {
 		fseek(u_db,0,SEEK_SET);
@@ -107,7 +114,7 @@ int addUser(USER *u) {
 
 		free(logIDrecord);
 		fclose(u_db);
-		return 0;		//Utilisateur enregistré avec succès
+		return 2;		//Utilisateur enregistré avec succès
 	}
 
 	sprintf(logIDrecord,"AddUser: Echec lors de l'ajout de l'utilisateur [%s].",u->u_id);
@@ -121,6 +128,7 @@ int delUser(char *u_id) {
 	unsigned int u_nbr = 1;
 	char *logIDrecord = malloc(sizeof(char)*64);
 	int i;
+	int fail = 0;
 
 	u_db = fopen("users.crd","rb+");
 	if (u_db != NULL) {
@@ -139,11 +147,18 @@ int delUser(char *u_id) {
 		for (i = 0; i < (u_nbr + 1); i++ ) {
 			if ( strcmp(dump[i].u_id, u_id) != 0 ) {
 				fwrite(&dump[i],sizeof(USER),1,u_db);
+			} else {
+				if (dump[i].u_rank == 4) {
+					printf("Suppression impossible du compte admin.");
+					addLogWarn("DelUser: Suppression impossible du compte admin.");
+				}
 			}
 		}
 
-		sprintf(logIDrecord,"DelUser: Suppression avec succès de l'utilisateur [%s].",u_id);
-		addLogInfo(logIDrecord);
+		if (fail == 0) {
+			sprintf(logIDrecord,"DelUser: Suppression avec succès de l'utilisateur [%s].",u_id);
+			addLogInfo(logIDrecord);
+		}
 		free(logIDrecord);
 		fclose(u_db);
 		return 0;		//Utilisateur supprimé avec succès

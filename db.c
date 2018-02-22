@@ -304,7 +304,7 @@ int sortReadyCard(FICHE *tab_f){
 	FICHE *buffer = malloc(sizeof(FICHE));
 	HEAD *h = malloc(sizeof(HEAD));
 	int i;
-	int t = 0;
+	unsigned int t = 0;
 
 	if (getConfig(h) != 0) {
 		addLogCritical("SrtRdyCard: Erreur de lecture de l'en-tête de la DB !");
@@ -338,14 +338,21 @@ int sortReadyCard(FICHE *tab_f){
 	return t;		//Retourne le nombre de fiche
 }
 
-void updateRdyCpt(int c){
+void updateRdyCpt(unsigned int c){
 	FILE *db = NULL;
+	unsigned int *c_glob = malloc(sizeof(unsigned int));
 
 	db = fopen("db.irm","rb+");
 	if (db != NULL) {
-		fseek(db,sizeof(float) + sizeof(unsigned short int) + sizeof(unsigned int),SEEK_SET);
-		fwrite(&c,sizeof(int),1,db);
+		fseek(db,sizeof(float) + sizeof(unsigned short int),SEEK_SET);
+		fread(c_glob,sizeof(unsigned int),1,db);
+		fseek(db,sizeof(float) + sizeof(unsigned short int),SEEK_SET);
+		*c_glob = *c_glob + 1;
+		fwrite(c_glob,sizeof(unsigned int),1,db);
+		fwrite(&c,sizeof(unsigned int),1,db);
 		fclose(db);
 	}
+
+	free(c_glob);
 }
 

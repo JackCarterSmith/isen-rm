@@ -11,7 +11,7 @@
 typedef struct user { 		//Struct utilisateur
 	char u_id[9];
 	char u_pin[5];
-	unsigned int u_rank;
+	unsigned int u_rank;		//Type d'utilisateur (0 = visiteur, 1 = technicien, 2 = responsable inventaire, 3 = validateur, 4 = admin)
 }USER;
 
 void u_newSetup();	//Nouvelle installation

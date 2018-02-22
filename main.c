@@ -7,27 +7,92 @@
 #include "db.h"
 #include "backup.h"
 
+
 int main()
 {
 	FILE *db = NULL;
+	FILE *u_login = NULL;
 
-    printf(" *******************\n *  ISEN RM v1.00  *\n *******************\n\n");
+	USER *u = malloc(sizeof(USER));
 
-    if (initialise_logger() != 0) {			//Initialise le logger et v�rifie qu'il a bien d�marr�
-    	printf("\n\nATTENTION ! Le fichier de log ne peut etre ecrit, aucune info ne sera enregistree !\n\n");
-    }
+	HEAD *conf = malloc(sizeof(HEAD));
 
-    db = fopen("db.irm","rb");
-    if (db == NULL) { regenDBFile(); }		//V�rifier si la base de donn�e existe, sinon la reconstruire
-    fclose(db);
+	char choice;
+	int sub_choice = 0;
 
-    backupDB();
 
-    /*
-    u_login = fopen("users.crd","rb");
-    if (u_login == NULL) { u_newSetup(); }
-    fclose(u_login);
-    */
+	if (initialise_logger() != 0) {			//Initialise le logger et vérifie qu'il a bien démarré
+		printf("\n\nATTENTION ! Le fichier de log ne peut etre ecrit, aucune info ne sera enregistree !\n\n");
+	}
+
+	db = fopen("db.irm","rb");
+	if (db == NULL) { regenDBFile(); }		//Vérifier si la base de donnée existe, sinon la reconstruire
+	fclose(db);
+
+	u_login = fopen("users.crd","rb");
+	if (u_login == NULL) { u_newSetup(); }
+	fclose(u_login);
+
+
+	do {
+		printf(" #-----------------#\n |  ISEN RM v1.00  |\n #-----------------#\n\n");
+
+		printf("Entrer votre ID utilisateur (ou 'guest' si vous êtes simple visiteur) : ");
+		scanf("%s",u->u_id);
+		if (strcmp(u->u_id,"guest") == 0) {
+			u->u_rank = 0;
+		} else {
+			printf("Entrer votre PIN : ");
+			scanf("%s",u->u_pin);
+
+			if (userLogin(u) != 0) {
+				printf("Un problème est survenu durant l'authentification, consulter les logs pour plus de détails.\n");
+				free(u);
+				return -1;	//Défaillance authentification
+			}
+		}
+
+		backupDB();		//Backup de démarrage par mesure de précaution
+
+
+		switch (u->u_rank) {
+		case 1:		//Menu technicien
+			printf("\n\n\n\n\n\n\n\n\n\nBienvenue Technicien [%s], vous pouvez accéder aux fiches PC pour les édités.\n", u->u_id);
+			printf(" #================================#\n |    Menu Technicien    |\n #===========================#\n\n");
+			do {
+				printf(" ");
+				scanf("%d",&sub_choice);
+			} while (sub_choice > 0 && sub_choice < 4);
+
+		break;
+		case 2:		//Menu responsable inventaire
+			printf("\n\n\n\n\n\n\n\n\n\nBienvenue Responsable inventaire [%s], vous pouvez accéder aux ajouts et suppression des fiches PC.\n", u->u_id);
+
+		break;
+		case 3:		//Menu validateur
+			printf("\n\n\n\n\n\n\n\n\n\nBienvenue Validateur [%s], vous pouvez accéder aux procédures de validation des PC.\n", u->u_id);
+
+		break;
+		case 4:		//Menu admin
+			printf("\n\n\n\n\n\n\n\n\n\nBienvenue Administrateur, vous pouvez accéder à toutes les fonctions du programme.\n");
+
+		break;
+		default:	//Menu visiteur
+			if (getConfig(conf) == 1) {conf->cpt_rep_total = 0;}
+			printf("\n\n\n\n\n\n\n\n\n\nBienvenue Visiteur, vous pouvez accéder aux derniers chiffres de l'association.\n");
+			printf(" #================================#\n |    PC total réparé : %d   |\n #===========================#\n\n",conf->cpt_rep_total);
+		}
+
+		printf("Retour écran de login ? (y/n)");
+		scanf(" %c",&choice);
+	} while (choice != 'n');
+
+	printf("Exit program.");
+	return 0;
+
+
+
+
 
     int taille;
     FICHE *tab = NULL;
@@ -81,7 +146,6 @@ int main()
 	editCard(test);
 
 	if (tab != NULL) {free(tab);}
-	return 0;
 }
 /*
 

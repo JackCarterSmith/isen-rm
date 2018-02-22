@@ -13,8 +13,8 @@
 typedef struct head_db{
 	float version_db;		//Pour la compatibilité et la migration des donn�es
 	unsigned short int nbr_fiches;
-	unsigned int cpt_rep_total;
 	unsigned int cpt_ready2go;
+	unsigned int cpt_rep_total;
 }HEAD;
 
 typedef struct stat_pc { 	 //Structure de booleens. Chaque variable prend 1 si le PC comporte le module correspondant.
@@ -43,7 +43,7 @@ int getConfigF(HEAD *h, char db_file[]);		//Récupère la config enregistrer dan
 int checkIDExist(char id[], unsigned short int max_fiches, FILE *f);		//Vérifie si l'id existe dans la db, necessite le passage du flux de fichier pour optimiser la mémoire.
 
 int sortReadyCard(FICHE *tab_f);		//Function de recherche pc prêt (ETAT = 1 partout), retourne le nombre de pc compté et rempli le tableau fourni
-void updateRdyCpt(int c);		//Modifi le compteur dans le HEAD de la DB
+void updateRdyCpt(unsigned int c);		//Modifi le compteur dans le HEAD de la DB
 
 int addCard(FICHE *data);		//Ajouter une fiche
 int delCard(char id[]);			//Supprimer une fiche
