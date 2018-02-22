@@ -443,11 +443,67 @@ int sortReadyCard(FICHE *tab_f){
 		tab_f = buffer;
 	} else {
 		tab_f = NULL;
+		free(buffer);
 	}
 	free(h);
 	updateRdyCpt(t);
 	return t;		//Retourne le nombre de fiche
 }
+
+/*
+int sortReadyCard(FICHE **tab_f){
+	FILE *db = NULL;
+	FICHE *buffer = malloc(sizeof(FICHE));
+	HEAD *h = malloc(sizeof(HEAD));
+	int i;
+	unsigned int t = 0;
+
+	if (getConfig(h) != 0) {
+		addLogCritical("SrtRdyCard: Erreur de lecture de l'en-tête de la DB !");
+		free(h);
+		free(buffer);
+		return -1;		//Problème dans la lecture du fichier
+	}
+
+	if (h->nbr_fiches <= 0) {
+		addLogInfo("SrtRdyCard: Aucune fiche dans la DB, abandon.");
+		free(h);
+		free(buffer);
+		return -2;		//Aucune fiche dans la DB, abandon
+	}
+
+	db = fopen("db.irm","rb");
+	if (db != NULL){
+		fseek(db, sizeof(HEAD), SEEK_SET);
+		for (i = 0; i < ((h->nbr_fiches) + 1); i++ ) {
+			fread(buffer, sizeof(FICHE), 1, db);
+			if ( buffer->etat.Hardware == 1 && buffer->etat.OS == 1 && buffer->etat.Drivers == 1 && buffer->etat.Software == 1 ) {
+				t = t + 1;
+			}
+		}
+		if (t > 0) {
+			buffer = realloc(buffer,sizeof(FICHE) * t);
+			for (i = 0; i < ((h->nbr_fiches) + 1); i++ ) {
+				fread(buffer+t, sizeof(FICHE), 1, db);
+				if ( (buffer+t)->etat.Hardware == 1 && (buffer+t)->etat.OS == 1 && (buffer+t)->etat.Drivers == 1 && (buffer+t)->etat.Software == 1 ) {
+					t = t + 1;
+				}
+			}
+		}
+		fclose(db);
+	}
+
+	if (t > 0) {
+		*tab_f = buffer;
+	} else {
+		*tab_f = NULL;
+		free(buffer);
+	}
+	free(h);
+	updateRdyCpt(t);
+	return t;		//Retourne le nombre de fiche
+}
+*/
 
 void updateRdyCpt(unsigned int c){
 	FILE *db = NULL;

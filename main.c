@@ -156,16 +156,18 @@ void sub_dispCptTot() {
 }
 
 void sub_dispRdy2Go() {
-	FICHE *f = NULL;
+	FICHE **f = NULL;
 	int i,nbr = 0;
 
 	printf("\n Compteur de PC prêt à l'utilisation\n -----------------------------------\n\n");
 	nbr = sortReadyCard(f);
 	if (nbr >= 0) {
 		printf(" Nombre de PC prêt à l'utilisation : %d\n\nIDs correspondant :\n",nbr);
+		/*
 		for (i = 0; i < nbr; i++) {
-			printf(" - [%s]",f[i].ID);
+			printf(" - [%s]",(*f)[i].ID);
 		}
+		*/
 	} else {
 		printf("Une erreur s'est produite, consulter les logs pour plus de détails.\n\n");
 	}
@@ -219,7 +221,7 @@ int main()
 	FILE *u_login = NULL;
 
 	USER *u = malloc(sizeof(USER));
-	FICHE *u_dump = NULL;
+	FICHE **u_dump = NULL;
 
 	char choice;
 	int sub_choice = 0;
@@ -350,7 +352,7 @@ int main()
 			do {
 				printf(" #================================================================================#\n |                               Menu Administrateur                              |\n #================================================================================#\n\n");
 				do {
-					printf("   [1] - Ajouter une nouvelle fiche PC\n   [2] - Supprimer une fiche PC\n   [3] - Consulter une fiche PC\n   [4] - Edition fiche PC\n   [5] - Valider et verrouiller une fiche PC\n   [6] - Consulter le nombre de PC en stock\n   [7] - Consulter le nombre de PC prêt à être utilisé et les affichés\n   [8] - Ajouter un utilisateur\n   [9] - Supprimer un utilisateur\n   [0] - Logout\n\n");
+					printf("   [1] - Ajouter une nouvelle fiche PC\n   [2] - Supprimer une fiche PC\n   [3] - Consulter une fiche PC\n   [4] - Edition fiche PC\n   [5] - Valider et verrouiller une fiche PC\n   [6] - Consulter le nombre de PC en stock\n   [7] - Consulter le nombre de PC prêt à être utilisé\n   [8] - Ajouter un utilisateur\n   [9] - Supprimer un utilisateur\n   [0] - Logout\n\n");
 					printf(" Spécifier le numéro d'action à lancer : ");
 					scanf("%d",&sub_choice);
 				} while (sub_choice < 0 && sub_choice > 9);
