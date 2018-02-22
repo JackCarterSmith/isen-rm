@@ -8,6 +8,40 @@
 #include "backup.h"
 
 
+
+
+void sub_addUser() {
+	USER *usr = malloc(sizeof(USER));
+
+	printf("\n Ajout d'utilisateur\n -------------------\n\n");
+	printf("Entrer l'ID du nouvel utilisateur (8 chiffres) : ");
+	scanf("%s",usr->u_id);
+	printf("Entrer le PIN pour cet utilisateur (4 chiffres) : ");
+	scanf("%s",usr->u_pin);
+	printf("Entrer le rang pour cet utilisateur\n(1 = Technicien, 2 = Responsable inventaire, 3 = Validateur) : ");
+	scanf("%d",&usr->u_rank);
+
+	if (addUser(usr) != 0) {
+		printf("Une erreur s'est produite, consulter les logs pour plus de détails.");
+	}
+
+	free(usr);
+}
+
+void sub_delUser() {
+	char id[9];
+
+	printf("\n Suppression d'utilisateur\n -------------------------\n\n");
+	printf("Entrer l'ID de l'utilisateur à supprimer (8 chiffres) : ");
+	scanf("%s",id);
+
+	if (delUser(id) != 0) {
+		printf("Une erreur s'est produite, consulter les logs pour plus de détails.");
+	}
+}
+
+
+
 int main()
 {
 	FILE *db = NULL;
@@ -35,7 +69,7 @@ int main()
 
 
 	do {
-		printf(" #-----------------#\n |  ISEN RM v1.00  |\n #-----------------#\n\n");
+		printf("\n\n\n\n\n #=================#\n |  ISEN RM v1.00  |\n #=================#\n\n");
 
 		printf("Entrer votre ID utilisateur (ou 'guest' si vous êtes simple visiteur) : ");
 		scanf("%s",u->u_id);
@@ -57,107 +91,123 @@ int main()
 
 		switch (u->u_rank) {
 		case 1:		//Menu technicien
-			printf("\n\n\n\n\n\n\n\n\n\nBienvenue Technicien [%s], vous pouvez accéder aux fiches PC pour les édités.\n", u->u_id);
-			printf(" #================================#\n |    Menu Technicien    |\n #===========================#\n\n");
+			printf("\n\n\nBienvenue Technicien [%s], vous pouvez accéder aux fiches PC pour les édités.\n", u->u_id);
 			do {
-				printf("   [1] - Edition fiche PC\n   [2] - Consulter une fiche PC\n   [3] - Consulter le nombre de PC en stock\n\n");
-				printf(" Spécifier le numéro d'action à lancer : ");
-				scanf("%d",&sub_choice);
-			} while (sub_choice <= 0 && sub_choice > 3);
+				printf(" #=============================#\n |    Menu Technicien    |\n #=============================#\n\n");
+				do {
+					printf("   [1] - Edition fiche PC\n   [2] - Consulter une fiche PC\n   [3] - Consulter le nombre de PC en stock\n   [0] - Logout\n\n");
+					printf(" Spécifier le numéro d'action à lancer : ");
+					scanf("%d",&sub_choice);
+				} while (sub_choice < 0 && sub_choice > 3);
 
-			switch (sub_choice) {
-			case 1:
-				break;
-			case 2:
-				break;
-			case 3:
-				break;
-			}
+				switch (sub_choice) {
+				case 1:
+					break;
+				case 2:
+					break;
+				case 3:
+					break;
+				}
+			} while (sub_choice != 0);
 		break;
 		case 2:		//Menu responsable inventaire
-			printf("\n\n\n\n\n\n\n\n\n\nBienvenue Responsable inventaire [%s], vous pouvez accéder aux ajouts et suppression des fiches PC.\n", u->u_id);
-			printf(" #================================#\n |    Menu Rep.Inv    |\n #===========================#\n\n");
+			printf("\n\n\nBienvenue Responsable inventaire [%s], vous pouvez accéder aux ajouts et suppression des fiches PC.\n", u->u_id);
 			do {
-				printf("   [1] - Ajouter une nouvelle fiche PC\n   [2] - Supprimer une fiche PC\n   [3] - Consulter une fiche PC\n   [4] - Consulter le nombre de PC en stock\n   [5] - Consulter le nombre de PC prêt à être utilisé\n\n");
-				printf(" Spécifier le numéro d'action à lancer : ");
-				scanf("%d",&sub_choice);
-			} while (sub_choice <= 0 && sub_choice > 5);
+				printf(" #=============================#\n |    Menu Rep.Inv    |\n #=============================#\n\n");
+				do {
+					printf("   [1] - Ajouter une nouvelle fiche PC\n   [2] - Supprimer une fiche PC\n   [3] - Consulter une fiche PC\n   [4] - Consulter le nombre de PC en stock\n   [5] - Consulter le nombre de PC prêt à être utilisé\n   [0] - Logout\n\n");
+					printf(" Spécifier le numéro d'action à lancer : ");
+					scanf("%d",&sub_choice);
+				} while (sub_choice < 0 && sub_choice > 5);
 
-			switch (sub_choice) {
-			case 1:
-				break;
-			case 2:
-				break;
-			case 3:
-				break;
-			case 4:
-				break;
-			case 5:
-				break;
-			}
+				switch (sub_choice) {
+				case 1:
+					break;
+				case 2:
+					break;
+				case 3:
+					break;
+				case 4:
+					break;
+				case 5:
+					break;
+				}
+			} while (sub_choice != 0);
 		break;
 		case 3:		//Menu validateur
-			printf("\n\n\n\n\n\n\n\n\n\nBienvenue Validateur [%s], vous pouvez accéder aux procédures de validation des PC.\n", u->u_id);
-			printf(" #================================#\n |    Menu Validateur   |\n #===========================#\n\n");
+			printf("\n\n\nBienvenue Validateur [%s], vous pouvez accéder aux procédures de validation des PC.\n", u->u_id);
 			do {
-				printf("   [1] - Valider et verrouiller une fiche PC\n   [2] - Consulter une fiche PC\n   [3] - Consulter le nombre de PC en stock\n   [4] - Consulter le nombre de PC prêt à être utilisé\n\n");
-				printf(" Spécifier le numéro d'action à lancer : ");
-				scanf("%d",&sub_choice);
-			} while (sub_choice <= 0 && sub_choice > 4);
+				printf(" #=============================#\n |    Menu Validateur   |\n #=============================#\n\n");
+				do {
+					printf("   [1] - Valider et verrouiller une fiche PC\n   [2] - Consulter une fiche PC\n   [3] - Consulter le nombre de PC en stock\n   [4] - Consulter le nombre de PC prêt à être utilisé\n   [0] - Logout\n\n");
+					printf(" Spécifier le numéro d'action à lancer : ");
+					scanf("%d",&sub_choice);
+				} while (sub_choice < 0 && sub_choice > 4);
 
-			switch (sub_choice) {
-			case 1:
-				break;
-			case 2:
-				break;
-			case 3:
-				break;
-			case 4:
-				break;
-			}
+				switch (sub_choice) {
+				case 1:
+					break;
+				case 2:
+					break;
+				case 3:
+					break;
+				case 4:
+					break;
+				}
+			} while (sub_choice != 0);
 		break;
 		case 4:		//Menu admin
-			printf("\n\n\n\n\n\n\n\n\n\nBienvenue Administrateur, vous pouvez accéder à toutes les fonctions du programme.\n");
-			printf(" #================================#\n |    Menu Technicien    |\n #===========================#\n\n");
+			printf("\n\n\nBienvenue Administrateur, vous pouvez accéder à toutes les fonctions du programme.\n");
 			do {
-				printf("   [1] - Ajouter une nouvelle fiche PC\n   [2] - Supprimer une fiche PC\n   [3] - Consulter une fiche PC\n   [4] - Edition fiche PC\n   [5] - Valider et verrouiller une fiche PC\n   [6] - Consulter le nombre de PC en stock\n   [7] - Consulter le nombre de PC prêt à être utilisé\n   [8] - Ajouter un utilisateur\n   [9] - Supprimer un utilisateur\n\n");
-				printf(" Spécifier le numéro d'action à lancer : ");
-				scanf("%d",&sub_choice);
-			} while (sub_choice <= 0 && sub_choice > 9);
+				printf(" #================================================================================#\n |                               Menu Administrateur                              |\n #================================================================================#\n\n");
+				do {
+					printf("   [1] - Ajouter une nouvelle fiche PC\n   [2] - Supprimer une fiche PC\n   [3] - Consulter une fiche PC\n   [4] - Edition fiche PC\n   [5] - Valider et verrouiller une fiche PC\n   [6] - Consulter le nombre de PC en stock\n   [7] - Consulter le nombre de PC prêt à être utilisé\n   [8] - Ajouter un utilisateur\n   [9] - Supprimer un utilisateur\n   [0] - Logout\n\n");
+					printf(" Spécifier le numéro d'action à lancer : ");
+					scanf("%d",&sub_choice);
+				} while (sub_choice < 0 && sub_choice > 9);
 
-			switch (sub_choice) {
-			case 1:
-				break;
-			case 2:
-				break;
-			case 3:
-				break;
-			case 4:
-				break;
-			case 5:
-				break;
-			case 6:
-				break;
-			case 7:
-				break;
-			case 8:
-				break;
-			case 9:
-				break;
-			}
+				switch (sub_choice) {
+				case 1:
+					break;
+				case 2:
+					break;
+				case 3:
+					break;
+				case 4:
+					break;
+				case 5:
+					break;
+				case 6:
+					break;
+				case 7:
+					break;
+				case 8:
+					sub_addUser();
+					break;
+				case 9:
+					sub_delUser();
+					break;
+				}
+			} while (sub_choice != 0);
 		break;
 		default:	//Menu visiteur
 			nbr_cardRdy = sortReadyCard(u_dump);
-			printf("\n\n\n\n\n\n\n\n\n\nBienvenue Visiteur, vous pouvez accéder aux derniers chiffres de l'association.\n");
-			printf(" #================================#\n |    PC total réparé : %d   |\n #===========================#\n\n",nbr_cardRdy);
+			printf("\n\n\nBienvenue Visiteur, vous pouvez accéder aux derniers chiffres de l'association.\n");
+			printf(" #=============================#\n |    PC total réparé : %d   |\n #=============================#\n\n",nbr_cardRdy);
 		}
 
-		printf("Retour écran de login ? (y/n)");
+		printf("\n\nRetour écran de login ? (y/n)");
 		scanf(" %c",&choice);
 	} while (choice != 'n');
 
 	printf("Exit program.");
 	return 0;
+
+
+
+
+
+
 
 
 
@@ -216,224 +266,3 @@ int main()
 
 	if (tab != NULL) {free(tab);}
 }
-/*
-
-
-    do {
-            do {
-                printf("\n -------------------\n |       MENU      |\n -------------------\n\n");
-                printf(" Veuillez entrer le type d'utilisateur.\n\n");
-                printf(" 1 | Technicien\n 2 | Responsable Inventaire\n 3 | Valideur\n 4 | Quitter le programme\n\n Champ de selection : ");
-                scanf(" %d", &choix);
-
-
-    do {
-            do {
-                printf("\n**ISEN RM**\n\nMENU\n");
-                printf("Type d'utilisateur ?\n");
-                printf("1/ Technicien\n");
-                printf("2/ Responsable Inventaire\n");
-                printf("3/ Valideur\n");
-                printf("4/ Quitter le programme");
-                printf("Votre choix ?\n");
-                scanf("%d", &choix);
-
-                while (choix < 1 || choix > 4);
-                switch (choix)
-                {
-                    case 1 :    addLogInfo("Action Technicien");
-                                printf("\n** Modifier les entrees de la DB **\n\n\n");
-                                //appel d'une fonction de sous menu technicien "modifier les entr�es de la DB"
-                                break;
-
-                    case 2 :    addLogInfo("Action Responsable inventaire");
-                                printf("\n** Ajout de fiches PC a ID unique **\n\n\n");
-                                //appel d'une fonction de sous menu resp inventaire "ajouter des fiches PC a ID unique"
-                                ajoutFichePC(monF, monA, taille, Exp);
-                                addCard(monF);
-                                break;
-
-                    case 3 :    addLogInfo("Action Valideur");
-                                // appel d'une fonction de sous menu valideur soit "supprimer une fiche PC" soit "retourner la fiche pc en maintenance"
-                                do {
-                                    do {
-											printf("\n -------------------\n |  MENU Valideur  |\n -------------------\n\n");
-											printf(" 3.1 | Supprimer une fiche pc\n 3.2 | Retrograder une fiche pc en maintenance\n 3.3 | Retour au menu principal\n\n Champ de selection : ");
-											scanf("%d", &choixValideur);
-                                        }
-                                            while (choixValideur < 1 || choixValideur > 3);
-                                            switch (choixValideur)
-                                            {
-											case 1 :    addLogInfo("Action Valideur - Supprimer une fiche pc");
-														//int supprimePC(FICHE *F, char *ID);
-
-											break;
-
-											case 2 :    addLogInfo("Action Valideur - Retrograder une fiche pc");
-														//int retrogradePC();
-
-											break;
-
-											case 3 :    addLogInfo("Action Valideur - Retour au menu principal");
-														//voir comment retourner au niveau pr�c�dent
-
-											default :   addLogWarn("Erreur saisie");
-											break;
-                                            }
-                                        } while (choix != 3);
-                                    break;
-
-                    case 4 :    addLogInfo("Quitter le programme");
-                    			break;
-
-                    default :   addLogWarn("Erreur saisie");
-                    			break;
-
-                }
-    }
-    while (choix != 4);
-    stop_logger();		//Stop le logger
-    free(my_app);
-    return 0;
-}
-
-//prototypes temporaires et � am�liorer.
-
-int CmptPcExp(STAT A[], int taille, int Exp)
-{
-    int i=0;
-
-    for (i=0; i<taille; i++)
-    {
-
-    }
-}
-
-int ajoutFichePC(FICHE *pp, STAT *A, int taille, int Exp)
-{
-    FILE*f=NULL;  //A voir le format de la DB, pour l'instant je proc�de comme si la DB �tait un .txt
-    char nomfic[32];
-    char O;
-    char N;
-    printf("Nom du fichier DB ?\n");
-    scanf("%s", nomfic);
-    f=fopen(nomfic, "a");
-
-    if(f==NULL) //fichier innexistant
-    {
-        printf("DB introuvable");
-
-        if(f==NULL) //Le prog n'a pas les droits en �criture
-            return -1;
-    }
-
-    printf("\nID du PC ?\n"); fprintf(f, "ID : %s", pp->Nom);
-    printf("Son CPU ?\n"); fprintf(f, "CPU : %s", pp->CPU); A->Materiel=1; if (pp->CPU==NULL) {A->Materiel=0;}
-    printf("HDD ?\n"); fprintf(f, "HDD : %s", pp->HDD); A->Materiel=1; if (pp->HDD==NULL) {A->Materiel=0;}
-    printf("Son OS ?\n"); fprintf(f, "OS : %s", pp->OS); A->Os=1; if (pp->OS==NULL) {A->Os=0;}
-
-    if (A->Materiel == 1 && A->Os == 1) //Si la partie materielle et l'os pr�sentes, l'etat est O pour oui.
-    {
-        fprintf(f, "Etat : O\n"); Exp=Exp+1;
-    }
-
-    else
-    {
-        fprintf(f, "Etat : N\n"); //Dans le cas contraire, l'etat est N pour non
-    }
-
-    //printf("Drivers install�s ?\n"); fprintf(f, "Drivers : %s", pp->Drivers);  //Drivers pr�sents mais optionnels
-    //printf("Divers software ?\n"); fprintf(f, "Softwares : %s", pp->Softwares); //Logiciels pr�sents mais optionnels
-
-    taille = taille+1;
-    fclose(f);
-    return taille;
-}
-
-int supprimePC(FICHE *F, char *ID)
-{
-	FILE*f=NULL;
-	int pos=0;
-	int trouve=0;
-	char nomfic[32];
-
-	printf("Nom du fichier DB ?\n");
-	scanf("%s", nomfic); //exemple "DB.db"
-	f=fopen(nomfic, "r+"); //En revanche j'ai �crit cette fonction de la m�me mani�re que pour un .txt donc m�thode � v�rifier.
-
-	if(f==NULL) //Si le fichier n'existe pas, on retourne une erreur
-	{
-		return 0;
-	}
-
-	rewind(f); //On se place au d�but du fichier
-
-	while(fscanf(f,"%s\n",F->Nom)!=EOF)
-	{
-		if(strcmp(F->Nom, ID)==0)
-		{
-			trouve=1;
-			break;
-		}
-	pos++;
-	}
-
-	if (trouve == 0) return 0;
-
-	printf("fiche trouvée\n");
-
-	while(fscanf(f,"%s\n",F->Nom)!=EOF)
-	{
-		fseek(f,pos*52,SEEK_SET); //taille 52 arbitraire a v�rifier la taille en octet d'une ligne sachant que la DB sera en binaire
-		fprintf(f,"%-20s%",F->Nom);
-		pos++;
-		fseek(f,(pos+1)*52,SEEK_SET);
-	}
-
-	fseek(f,pos*52,SEEK_SET);
-	fprintf(f,"%c",26);
-	fclose(f);
-
-	return 1;
-}
-
-int compareLogin(char *fichierLogin)
-{
-	char Username1[33];
-	char Password1[33];
-	char UsernameTrue[33];
-	char PasswordTrue[33];
-    int compCharUsername;
-    int compCharPassword;
-
-	LOGIN L;
-	FILE* login=NULL;
-	login=fopen(fichierLogin,"r");
-	if(login==NULL) { return -1; }
-
-    do{
-
-            printf("\nEntrez le nom d'utilisateur :");
-            scanf("%s", Username1);
-            printf("Entrez le mot de passe :");
-            scanf("%s", Password1);
-
-            fscanf(login,"%s\n%s",&L.UserName,&L.PassWord);
-
-            compCharUsername = strcmp(Username1, L.UserName);
-            compCharPassword = strcmp(Password1, L.PassWord);
-
-            if (compCharPassword ==0 && compCharUsername==0) {printf("\nAcces autorise\n");}
-
-                else
-                    {
-                        printf("\nAcces refuse\n");
-                    }
-
-        } while (compCharUsername !=0 || compCharPassword !=0);
-
-
-
-	fclose(login);
-	return 0;
-}*/

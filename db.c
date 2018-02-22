@@ -313,6 +313,13 @@ int sortReadyCard(FICHE *tab_f){
 		return -1;		//Problème dans la lecture du fichier
 	}
 
+	if (h->nbr_fiches <= 0) {
+		addLogInfo("SrtRdyCard: Aucune fiche dans la DB, abandon.");
+		free(h);
+		free(buffer);
+		return -2;		//Aucune fiche dans la DB, abandon
+	}
+
 	db = fopen("db.irm","rb");
 	if (db != NULL){
 		fseek(db, sizeof(HEAD), SEEK_SET);

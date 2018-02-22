@@ -114,7 +114,7 @@ int addUser(USER *u) {
 
 		free(logIDrecord);
 		fclose(u_db);
-		return 2;		//Utilisateur enregistré avec succès
+		return 0;		//Utilisateur enregistré avec succès
 	}
 
 	sprintf(logIDrecord,"AddUser: Echec lors de l'ajout de l'utilisateur [%s].",u->u_id);
