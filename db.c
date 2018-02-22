@@ -94,6 +94,15 @@ int checkIDExist(char id[], unsigned short int max_fiches, FILE *f) {
 	return 0;	//0 dans le cas contraire
 }
 
+void initCard(FICHE *f) {
+	strcpy(f->ID,"..........");
+	strcpy(f->CPU,"...............");
+	strcpy(f->MEM,"........");
+	strcpy(f->HDD,"........");
+	strcpy(f->Nom,"...............................................................................................................................");
+	strcpy(f->OS,"..............................");
+}
+
 int addCard(FICHE *data){
 	FILE *db = NULL;
 	HEAD *h = malloc(sizeof(HEAD));
@@ -109,6 +118,14 @@ int addCard(FICHE *data){
 
 	db = fopen("db.irm","rb+");
 	if (db != NULL){
+		if ( checkIDExist(data->ID,h->nbr_fiches,db) == 1) {
+			free(h);
+			free(logIDrecord);
+			fclose(db);
+			addLogWarn("Add: L'id existe déjà dans la DB.");
+			return 2;			//Aucun fichier dans la DB correspond à l'ID spécifié
+		}
+
 		fseek(db, sizeof(float), SEEK_SET);
 		fwrite(&h->nbr_fiches, sizeof(unsigned short int), 1, db);
 
@@ -120,7 +137,7 @@ int addCard(FICHE *data){
 		addLogCritical("Add: Erreur lors de l'ajout de la fiche dans la DB !");
 		free(h);
 		free(logIDrecord);
-		return 2;		//Problème dans la lecture du fichier
+		return 3;		//Problème dans la lecture du fichier
 	}
 
 	free(h);
@@ -152,6 +169,7 @@ int delCard(char id[]){
 			addLogWarn("Del: L'id de la fiche spécifié n'est pas enregistré.");
 			return 2;			//Aucun fichier dans la DB correspond à l'ID spécifié
 		}
+
 		fseek(db, sizeof(HEAD), SEEK_SET);
 		fread(dump, sizeof(FICHE), h->nbr_fiches, db);		//Le coeur de la function de dump des fiches en mémoire
 

@@ -42,6 +42,7 @@ int regenDBFile();  //Regénère la base de donnée, la remplace si elle existe 
 int getConfig(HEAD *h);		//Récupère la config enregistrer dans le HEAD de la DB et l'enregistre dans le pointeur fourni.
 int getConfigF(HEAD *h, char db_file[]);		//Récupère la config enregistrer dans le HEAD dans le fichier DB spécifié et l'enregistre dans le pointeur fourni.
 int checkIDExist(char id[], unsigned short int max_fiches, FILE *f);		//Vérifie si l'id existe dans la db, necessite le passage du flux de fichier pour optimiser la mémoire.
+void initCard(FICHE *f);		//Permet de purger les zones mémoire du tas afin d'éviter de 'salir' la DB avec des fausses données.
 
 int sortReadyCard(FICHE *tab_f);		//Function de recherche pc prêt (ETAT = 1 partout), retourne le nombre de pc compté et rempli le tableau fourni
 void updateRdyCpt(unsigned int c);		//Modifi le compteur dans le HEAD de la DB

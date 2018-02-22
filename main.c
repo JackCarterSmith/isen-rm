@@ -11,15 +11,72 @@
 
 
 void sub_addCard() {
+	FICHE *f = malloc(sizeof(FICHE));
+	char c;
 
+	printf("\n Ajout d'une fiche PC\n --------------------\n\n");
+	initCard(f);
+	do {
+		printf("\nEntrer l'ID du PC (10 chiffres) : ");
+		scanf("%s",f->ID);
+	} while (strlen(f->ID) != 10);
+	printf("\nEntrer un nom pour désigner le PC (127 chars max) : ");
+	while((c = getchar()) != '\n' && c != EOF)
+		/* discard */ ;
+	gets(f->Nom);
+	printf("\nPréciser le modèle du CPU si connu (N/A dans le cas contraire) : ");
+	gets(f->CPU);
+	printf("\nPréciser la quantité de RAM si connu (N/A dans le cas contraire) : ");
+	gets(f->MEM);
+	printf("\nPréciser la capacité du HDD si connu (N/A dans le cas contraire) : ");
+	gets(f->HDD);
+	printf("\nPréciser l'OS si connu (N/A dans le cas contraire) : ");
+	gets(f->OS);
+	f->etat.Hardware = 0;
+	f->etat.OS = 0;
+	f->etat.Drivers = 0;
+	f->etat.Software = 0;
+	f->locked = 0;
+
+	if (addCard(f) != 0) {
+		printf("Une erreur s'est produite, consulter les logs pour plus de détails.\n\n");
+	}
+
+	free(f);
 }
 
 void sub_delCard() {
+	char id[11];
 
+	printf("\n Suppression fiche PC\n --------------------\n\n");
+	do {
+		printf("Entrer l'ID du PC à supprimer (10 chiffres) : ");
+		scanf("%s",id);
+	} while (strlen(id) != 10);
+
+	if (delCard(id) != 0) {
+		printf("Une erreur s'est produite, consulter les logs pour plus de détails.\n\n");
+	}
 }
 
 void sub_readCard() {
+	char id[11];
+	FICHE *ddump = malloc(sizeof(FICHE));
 
+	printf("\n Consultation fiche PC\n ---------------------\n\n");
+	do {
+		printf("Entrer l'ID du PC à consulter (10 chiffres) : ");
+		scanf("%s",id);
+	} while (strlen(id) != 10);
+
+	if (readCard(id,ddump) != 0) {
+		printf("Une erreur s'est produite, consulter les logs pour plus de détails.\n\n");
+	} else {
+		printf("Nom : %s\nEtat (Hardware-OS-Drivers-Software) : (%d-%d-%d-%d)\nCPU : %s\nMEM : %s\nHDD : %s\nOS : %s\n\n",ddump->Nom,ddump->etat.Hardware,ddump->etat.OS,ddump->etat.Drivers,ddump->etat.Software,ddump->CPU,ddump->MEM,ddump->HDD,ddump->OS);
+
+	}
+
+	free(ddump);
 }
 
 void sub_editCard() {
@@ -42,15 +99,21 @@ void sub_addUser() {
 	USER *usr = malloc(sizeof(USER));
 
 	printf("\n Ajout d'utilisateur\n -------------------\n\n");
-	printf("Entrer l'ID du nouvel utilisateur (8 chiffres) : ");
-	scanf("%s",usr->u_id);
-	printf("Entrer le PIN pour cet utilisateur (4 chiffres) : ");
-	scanf("%s",usr->u_pin);
-	printf("Entrer le rang pour cet utilisateur\n(1 = Technicien, 2 = Responsable inventaire, 3 = Validateur) : ");
-	scanf("%d",&usr->u_rank);
+	do {
+		printf("Entrer l'ID du nouvel utilisateur (8 chiffres) : ");
+		scanf("%s",usr->u_id);
+	} while (strlen(usr->u_id) != 8);
+	do {
+		printf("Entrer le PIN pour cet utilisateur (4 chiffres) : ");
+		scanf("%s",usr->u_pin);
+	} while (strlen(usr->u_pin) != 4);
+	do {
+		printf("Entrer le rang pour cet utilisateur\n(1 = Technicien, 2 = Responsable inventaire, 3 = Validateur) : ");
+		scanf("%d",&usr->u_rank);
+	} while (usr->u_rank < 1 && usr->u_rank > 3);
 
 	if (addUser(usr) != 0) {
-		printf("Une erreur s'est produite, consulter les logs pour plus de détails.");
+		printf("Une erreur s'est produite, consulter les logs pour plus de détails.\n\n");
 	}
 
 	free(usr);
@@ -60,11 +123,13 @@ void sub_delUser() {
 	char id[9];
 
 	printf("\n Suppression d'utilisateur\n -------------------------\n\n");
-	printf("Entrer l'ID de l'utilisateur à supprimer (8 chiffres) : ");
-	scanf("%s",id);
+	do {
+		printf("Entrer l'ID de l'utilisateur à supprimer (8 chiffres) : ");
+		scanf("%s",id);
+	} while (strlen(id) != 8);
 
 	if (delUser(id) != 0) {
-		printf("Une erreur s'est produite, consulter les logs pour plus de détails.");
+		printf("Une erreur s'est produite, consulter les logs pour plus de détails.\n\n");
 	}
 }
 
