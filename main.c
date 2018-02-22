@@ -10,6 +10,34 @@
 
 
 
+void sub_addCard() {
+
+}
+
+void sub_delCard() {
+
+}
+
+void sub_readCard() {
+
+}
+
+void sub_editCard() {
+
+}
+
+void sub_validCard() {
+
+}
+
+void sub_dispCptTot() {
+
+}
+
+void sub_dispCptRdy2Go() {
+
+}
+
 void sub_addUser() {
 	USER *usr = malloc(sizeof(USER));
 
@@ -168,18 +196,25 @@ int main()
 
 				switch (sub_choice) {
 				case 1:
+					sub_addCard();
 					break;
 				case 2:
+					sub_delCard();
 					break;
 				case 3:
+					sub_readCard();
 					break;
 				case 4:
+					sub_editCard();
 					break;
 				case 5:
+					sub_validCard();
 					break;
 				case 6:
+					sub_dispCptTot();
 					break;
 				case 7:
+					sub_dispCptRdy2Go();
 					break;
 				case 8:
 					sub_addUser();
