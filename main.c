@@ -138,11 +138,36 @@ void sub_validCard() {
 }
 
 void sub_dispCptTot() {
+	HEAD *h = malloc(sizeof(HEAD));
 
+	printf("\n Compteur de fiches réparés total\n --------------------------------\n\n");
+	if (getConfig(h) != 0) {
+		printf("Une erreur s'est produite, consulter les logs pour plus de détails.\n\n");
+		h->cpt_rep_total = 0;
+		h->nbr_fiches = 0;
+	}
+
+	printf(" Nombre de fiches dans la DB : %d\n\n Nombre de PC au total réparé : %d",h->nbr_fiches,h->cpt_rep_total);
+
+	free(h);
 }
 
 void sub_dispRdy2Go() {
+	FICHE *f = NULL;
+	int i,nbr = 0;
 
+	printf("\n Compteur de PC prêt à l'utilisation\n -----------------------------------\n\n");
+	nbr = sortReadyCard(f);
+	if (nbr >= 0) {
+		printf(" Nombre de PC prêt à l'utilisation : %d\n\nIDs correspondant :\n",nbr);
+		for (i = 0; i < nbr; i++) {
+			printf(" - [%s]",f[i].ID);
+		}
+	} else {
+		printf("Une erreur s'est produite, consulter les logs pour plus de détails.\n\n");
+	}
+
+	if (f != NULL) { free(f); }
 }
 
 void sub_addUser() {
@@ -214,13 +239,17 @@ int main()
 	do {
 		printf("\n\n\n\n\n #=================#\n |  ISEN RM v1.00  |\n #=================#\n\n");
 
-		printf("Entrer votre ID utilisateur (ou 'guest' si vous êtes simple visiteur) : ");
-		scanf("%s",u->u_id);
+		do {
+			printf("Entrer votre ID utilisateur (ou 'guest' si vous êtes simple visiteur) : ");
+			scanf("%s",u->u_id);
+		} while ((strlen(u->u_id) != 8) && (strcmp(u->u_id,"guest") != 0));
 		if (strcmp(u->u_id,"guest") == 0) {
 			u->u_rank = 0;
 		} else {
-			printf("Entrer votre PIN : ");
-			scanf("%s",u->u_pin);
+			do {
+				printf("Entrer votre PIN : ");
+				scanf("%s",u->u_pin);
+			} while (strlen(u->u_pin) != 4);
 
 			if (userLogin(u) != 0) {
 				printf("Un problème est survenu durant l'authentification, consulter les logs pour plus de détails.\n");
@@ -229,14 +258,16 @@ int main()
 			}
 		}
 
-		backupDB();		//Backup de démarrage par mesure de précaution
+		if (u->u_rank != 0) {
+			backupDB();		//Backup de démarrage par mesure de précaution
+		}
 
 
 		switch (u->u_rank) {
 		case 1:		//Menu technicien
 			printf("\n\n\nBienvenue Technicien [%s], vous pouvez accéder aux fiches PC pour les édités.\n", u->u_id);
 			do {
-				printf(" #=============================#\n |    Menu Technicien    |\n #=============================#\n\n");
+				printf(" #=============================================================================#\n |                             Menu Technicien                              |\n #============================================================================#\n\n");
 				do {
 					printf("   [1] - Edition fiche PC\n   [2] - Consulter une fiche PC\n   [3] - Consulter le nombre de PC en stock\n   [0] - Logout\n\n");
 					printf(" Spécifier le numéro d'action à lancer : ");
@@ -245,10 +276,13 @@ int main()
 
 				switch (sub_choice) {
 				case 1:
+					sub_editCard();
 					break;
 				case 2:
+					sub_readCard();
 					break;
 				case 3:
+					sub_dispCptTot();
 					break;
 				}
 			} while (sub_choice != 0);
@@ -256,7 +290,7 @@ int main()
 		case 2:		//Menu responsable inventaire
 			printf("\n\n\nBienvenue Responsable inventaire [%s], vous pouvez accéder aux ajouts et suppression des fiches PC.\n", u->u_id);
 			do {
-				printf(" #=============================#\n |    Menu Rep.Inv    |\n #=============================#\n\n");
+				printf(" #==========================================================================#\n |                            Menu Resp.Inv                              |\n #==========================================================================#\n\n");
 				do {
 					printf("   [1] - Ajouter une nouvelle fiche PC\n   [2] - Supprimer une fiche PC\n   [3] - Consulter une fiche PC\n   [4] - Consulter le nombre de PC en stock\n   [5] - Consulter le nombre de PC prêt à être utilisé\n   [0] - Logout\n\n");
 					printf(" Spécifier le numéro d'action à lancer : ");
@@ -265,14 +299,19 @@ int main()
 
 				switch (sub_choice) {
 				case 1:
+					sub_addCard();
 					break;
 				case 2:
+					sub_delCard();
 					break;
 				case 3:
+					sub_readCard();
 					break;
 				case 4:
+					sub_dispCptTot();
 					break;
 				case 5:
+					sub_dispRdy2Go();
 					break;
 				}
 			} while (sub_choice != 0);
@@ -280,7 +319,7 @@ int main()
 		case 3:		//Menu validateur
 			printf("\n\n\nBienvenue Validateur [%s], vous pouvez accéder aux procédures de validation des PC.\n", u->u_id);
 			do {
-				printf(" #=============================#\n |    Menu Validateur   |\n #=============================#\n\n");
+				printf(" #============================================================================#\n |                             Menu Validateur                              |\n #=============================================================================#\n\n");
 				do {
 					printf("   [1] - Valider et verrouiller une fiche PC\n   [2] - Consulter une fiche PC\n   [3] - Consulter le nombre de PC en stock\n   [4] - Consulter le nombre de PC prêt à être utilisé\n   [0] - Logout\n\n");
 					printf(" Spécifier le numéro d'action à lancer : ");
@@ -289,12 +328,16 @@ int main()
 
 				switch (sub_choice) {
 				case 1:
+					sub_validCard();
 					break;
 				case 2:
+					sub_readCard();
 					break;
 				case 3:
+					sub_dispCptTot();
 					break;
 				case 4:
+					sub_dispRdy2Go();
 					break;
 				}
 			} while (sub_choice != 0);

@@ -23,10 +23,14 @@ void u_newSetup() {
 		remove("db.irm");
 	}
 
-	printf("Bienvenue dans la première installation du logiciel !\nMerci de spécifier l'identifiant administrateur (8 chiffres) : ");
-	scanf("%s",admin->u_id);
-	printf("Pour des raisons de sécurité, merci de spécifier un code à 4 chiffres : ");
-	scanf("%s",admin->u_pin);
+	do {
+		printf("Bienvenue dans la première installation du logiciel !\nMerci de spécifier l'identifiant administrateur (8 chiffres) : ");
+		scanf("%s",admin->u_id);
+	} while (strlen(admin->u_id) != 8);
+	do {
+		printf("Pour des raisons de sécurité, merci de spécifier un code à 4 chiffres : ");
+		scanf("%s",admin->u_pin);
+	} while (strlen(admin->u_pin) != 4);
 	admin->u_rank = 4;
 
 	printf("Enregistrement de l'utilisateur...\n");
