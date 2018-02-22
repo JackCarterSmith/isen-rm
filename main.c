@@ -83,44 +83,47 @@ void sub_readCard() {
 
 void sub_editCard() {
 	FICHE *f = malloc(sizeof(FICHE));
+	FICHE *edt_f = malloc(sizeof(FICHE));
 	char c;
 
 	printf("\n Edition d'une fiche PC\n ----------------------\n\n");
 	initCard(f);
+	initCard(edt_f);
 	do {
 		printf("\nEntrer l'ID du PC (10 chiffres) : ");
-		scanf("%s",f->ID);
-	} while (strlen(f->ID) != 10);
+		scanf("%s",edt_f->ID);
+	} while (strlen(edt_f->ID) != 10);
 
-	if (readCard(f->ID,f) != 0) {
+	if (readCard(edt_f->ID,f) != 0) {
 		printf("Une erreur s'est produite, consulter les logs pour plus de détails.\n\n");
 	} else {
 		printf("Nom : %s\nEtat (Hardware-OS-Drivers-Software) : (%d-%d-%d-%d)\nCPU : %s\nMEM : %s\nHDD : %s\nOS : %s\n\n",f->Nom,f->etat.Hardware,f->etat.OS,f->etat.Drivers,f->etat.Software,f->CPU,f->MEM,f->HDD,f->OS);
 		printf("\nPréciser le modèle du CPU : ");
 		while((c = getchar()) != '\n' && c != EOF)
 			/* discard */ ;
-		gets(f->CPU);
+		gets(edt_f->CPU);
 		printf("\nPréciser la quantité de RAM : ");
-		gets(f->MEM);
+		gets(edt_f->MEM);
 		printf("\nPréciser la capacité du HDD : ");
-		gets(f->HDD);
+		gets(edt_f->HDD);
 		printf("\nPréciser l'OS : ");
-		gets(f->OS);
+		gets(edt_f->OS);
 		printf("\nEtat - Hardware (0 = NOK / 1 = OK) : ");
-		scanf("%d",&(f->etat.Hardware));
+		scanf("%d",&(edt_f->etat.Hardware));
 		printf("\nEtat - OS (0 = NOK / 1 = OK) : ");
-		scanf("%d",&(f->etat.OS));
+		scanf("%d",&(edt_f->etat.OS));
 		printf("\nEtat - Drivers (0 = NOK / 1 = OK) : ");
-		scanf("%d",&(f->etat.Drivers));
+		scanf("%d",&(edt_f->etat.Drivers));
 		printf("\nEtat - Software (0 = NOK / 1 = OK) : ");
-		scanf("%d",&(f->etat.Software));
+		scanf("%d",&(edt_f->etat.Software));
 
-		if (editCard(f) != 0) {
+		if (editCard(edt_f) != 0) {
 			printf("Une erreur s'est produite, consulter les logs pour plus de détails.\n\n");
 		}
 	}
 
 	free(f);
+	free(edt_f);
 }
 
 void sub_validCard() {
@@ -395,67 +398,4 @@ int main()
 
 	printf("Exit program.");
 	return 0;
-
-
-
-
-
-
-
-
-
-
-
-    int taille;
-    FICHE *tab = NULL;
-    taille = sortReadyCard(tab);
-
-    printf("Taille du tableau : %d\n",taille);
-
-    FICHE *test = malloc(sizeof(FICHE));
-	printf("ID to write: ");
-	scanf("%s",test->ID);
-	strcpy(test->CPU,"Core i3");
-	strcpy(test->MEM,"2G");
-	strcpy(test->HDD,"250G");
-	strcpy(test->Nom,"TEST-bouzepc-db");
-	strcpy(test->OS,"NUXNUX\0");
-	test->etat.Hardware = 1;
-	test->etat.OS = 1;
-	test->etat.Drivers = 0;
-	test->etat.Software = 0;
-
-	addCard(test);
-
-	char id[11];
-	FICHE *ddump = malloc(sizeof(FICHE));
-	printf("Enter an ID to be read : ");
-	scanf("%s",id);
-
-	readCard(id,ddump);
-
-	printf("Nom : %s\nEtat : %d%d%d%d\nCPU : %s\nMEM : %s\nHDD : %s\nOS : %s\n",ddump->Nom,ddump->etat.Hardware,ddump->etat.OS,ddump->etat.Drivers,ddump->etat.Software,ddump->CPU,ddump->MEM,ddump->HDD,ddump->OS);
-
-	free(ddump);
-
-	printf("Enter an ID to be deleted : ");
-	scanf("%s",id);
-
-	delCard(id);
-
-	printf("ID to rewrite: ");
-	scanf("%s",test->ID);
-	strcpy(test->CPU,"Quad Core X15");
-	strcpy(test->MEM,"8G");
-	strcpy(test->HDD,"1T");
-	strcpy(test->Nom,"TEST-ultimatesexemachine-db");
-	strcpy(test->OS,"RECODED");
-	test->etat.Hardware = 1;
-	test->etat.OS = 1;
-	test->etat.Drivers = 1;
-	test->etat.Software = 1;
-
-	editCard(test);
-
-	if (tab != NULL) {free(tab);}
 }

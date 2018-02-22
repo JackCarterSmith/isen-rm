@@ -6,7 +6,7 @@
  *
  *      DB Core
  */
-#define VERSION 1.6
+#define VERSION 1.7
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -280,19 +280,19 @@ int editCard(FICHE *data){
 	db = fopen("db.irm","rb+");
 	if (db != NULL){
 		if (checkCardStatus(data->ID,h->nbr_fiches,db) == 0 ) {
+			addLogWarn("Edit: L'id de la fiche spécifié n'est pas enregistré.");
 			free(h);
 			free(logIDrecord);
 			free(card);
 			fclose(db);
-			addLogWarn("Edit: L'id de la fiche spécifié n'est pas enregistré.");
 			return 2;			//Aucun fichier dans la DB correspond à l'ID spécifié
 		} else if ( checkCardStatus(data->ID,h->nbr_fiches,db) == 2 ) {
+			sprintf(logIDrecord,"Edit: La fiche [%s] est verrouillé, abandon.",data->ID);
+			addLogWarn(logIDrecord);
 			free(h);
 			free(logIDrecord);
 			free(card);
 			fclose(db);
-			sprintf(logIDrecord,"Edit: La fiche [%s] est verrouillé, abandon.",data->ID);
-			addLogWarn(logIDrecord);
 			return 3;			//Fichier verrouillé, impossible de l'édité
 		}
 		fseek(db, sizeof(HEAD), SEEK_SET);
@@ -334,7 +334,6 @@ int validCard(char id[]) {
 	FICHE *card = malloc(sizeof(FICHE));
 	HEAD *h = malloc(sizeof(HEAD));
 	char *logIDrecord = malloc(sizeof(char)*64);
-	int lock = 1;
 	int i;
 
 	if (getConfig(h) != 0) {
@@ -347,29 +346,31 @@ int validCard(char id[]) {
 	db = fopen("db.irm","rb+");
 	if (db != NULL){
 		if (checkCardStatus(id,h->nbr_fiches,db) == 0 ) {
+			addLogWarn("Validate: L'id de la fiche spécifié n'est pas enregistré.");
+			fclose(db);
 			free(h);
 			free(logIDrecord);
 			free(card);
-			fclose(db);
-			addLogWarn("Validate: L'id de la fiche spécifié n'est pas enregistré.");
 			return 2;			//Aucun fichier dans la DB correspond à l'ID spécifié
 		} else if ( checkCardStatus(id,h->nbr_fiches,db) == 2 ) {
+			sprintf(logIDrecord,"Validate: La fiche [%s] est déjà verrouillé, abandon.",id);
+			addLogWarn(logIDrecord);
+			fclose(db);
 			free(h);
 			free(logIDrecord);
 			free(card);
-			fclose(db);
-			sprintf(logIDrecord,"Validate: La fiche [%s] est déjà verrouillé, abandon.",id);
-			addLogWarn(logIDrecord);
 			return 3;			//Fichier verrouillé, impossible de l'édité
 		}
 		fseek(db, sizeof(HEAD), SEEK_SET);
-		for (i = 0; i < ((h->nbr_fiches) + 1); i++ ) {
+		for (i = 0; i < h->nbr_fiches; i++ ) {
 			fread(card, sizeof(FICHE), 1, db);
 
 			if ( strcmp(card->ID, id) == 0 ) {
-				fseek(db, sizeof(HEAD) + (sizeof(FICHE) * i) + (sizeof(FICHE) - sizeof(int)), SEEK_SET);
-				fwrite(&lock, sizeof(int), 1, db);
+				fseek(db, sizeof(HEAD) + (sizeof(FICHE) * i), SEEK_SET);
+				card->locked = 1;
+				fwrite(card, sizeof(FICHE), 1, db);
 
+				printf("Fiche [%s] validé et verrouillé avec succés dans la DB.",id);
 				sprintf(logIDrecord,"Validate: Fiche [%s] validé et verrouillé avec succés dans la DB.",id);
 				addLogInfo(logIDrecord);
 
@@ -388,10 +389,10 @@ int validCard(char id[]) {
 		return 4;		//Problème dans la lecture du fichier
 	}
 
+	fclose(db);
 	free(h);
 	free(logIDrecord);
 	free(card);
-	fclose(db);
 	addLogCritical("Edit: ID data value corrupted!");
 	return 5;		//Erreur interne, id corrompu
 }
@@ -426,17 +427,23 @@ int sortReadyCard(FICHE *tab_f){
 				t = t + 1;
 			}
 		}
-		buffer = realloc(buffer,sizeof(FICHE) * t);
-		for (i = 0; i < ((h->nbr_fiches) + 1); i++ ) {
-			fread(buffer+t, sizeof(FICHE), 1, db);
-			if ( (buffer+t)->etat.Hardware == 1 && (buffer+t)->etat.OS == 1 && (buffer+t)->etat.Drivers == 1 && (buffer+t)->etat.Software == 1 ) {
-				t = t + 1;
+		if (t > 0) {
+			buffer = realloc(buffer,sizeof(FICHE) * t);
+			for (i = 0; i < ((h->nbr_fiches) + 1); i++ ) {
+				fread(buffer+t, sizeof(FICHE), 1, db);
+				if ( (buffer+t)->etat.Hardware == 1 && (buffer+t)->etat.OS == 1 && (buffer+t)->etat.Drivers == 1 && (buffer+t)->etat.Software == 1 ) {
+					t = t + 1;
+				}
 			}
 		}
 		fclose(db);
 	}
 
-	tab_f = buffer;
+	if (t > 0) {
+		tab_f = buffer;
+	} else {
+		tab_f = NULL;
+	}
 	free(h);
 	updateRdyCpt(t);
 	return t;		//Retourne le nombre de fiche
