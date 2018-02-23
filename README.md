@@ -39,6 +39,7 @@ Vous accéder ensuite au menu principal correspondant à votre niveau d'autorisa
 
 ## Function implémenté
 ### v1.0
+- Menu utilisateur personalisé
 - Moteur DB
 - Ajout fiche pc
 - Suppression fiche pc
@@ -47,6 +48,4 @@ Vous accéder ensuite au menu principal correspondant à votre niveau d'autorisa
 - Système de log des actions
 
 ## TODO
-- Ajout du menu de connexion utilisateur
-- Conception du menu principal
-- Début des batteries de tests et optimisation du code (si possible)
+- Remove bugs and SEGF...
